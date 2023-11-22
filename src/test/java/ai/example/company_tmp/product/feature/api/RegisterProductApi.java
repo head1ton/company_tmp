@@ -1,5 +1,6 @@
 package ai.example.company_tmp.product.feature.api;
 
+import ai.example.company_tmp.product.common.Scenario;
 import ai.example.company_tmp.product.domain.Category;
 import ai.example.company_tmp.product.domain.TemperatureZone;
 import ai.example.company_tmp.product.feature.RegisterProduct.Request;
@@ -82,7 +83,7 @@ public class RegisterProductApi {
         return this;
     }
 
-    public void request() {
+    public Scenario request() {
         Request request = new Request(
             name,
             code,
@@ -106,5 +107,7 @@ public class RegisterProductApi {
                    .post("/products")
                    .then().log().all()
                    .statusCode(HttpStatus.CREATED.value());
+
+        return new Scenario();
     }
 }

@@ -3,6 +3,7 @@ package ai.example.company_tmp.product.feature;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import ai.example.company_tmp.common.ApiTest;
+import ai.example.company_tmp.product.common.Scenario;
 import ai.example.company_tmp.product.domain.ProductRepository;
 import ai.example.company_tmp.product.feature.api.RegisterProductApi;
 import org.junit.jupiter.api.DisplayName;
@@ -17,7 +18,9 @@ class RegisterProductTest extends ApiTest {
     @Test
     @DisplayName("상품 등록")
     void registerProduct() {
-        new RegisterProductApi().request();
+        Scenario.registerProduct().request()
+                .registerProduct().request();
+
 
         assertThat(productRepository.findAll()).hasSize(1);
     }
