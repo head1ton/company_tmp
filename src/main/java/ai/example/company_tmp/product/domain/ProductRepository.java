@@ -1,11 +1,11 @@
 package ai.example.company_tmp.product.domain;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Component;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
+
+    default Product getBy(final Long productNo) {
+        return findById(productNo).orElseThrow(
+            () -> new IllegalArgumentException("상품이 존재하지 않습니다.%d".formatted(productNo)));
+    }
 }
