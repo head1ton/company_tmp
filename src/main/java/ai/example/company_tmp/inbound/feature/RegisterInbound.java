@@ -5,22 +5,30 @@ import ai.example.company_tmp.inbound.domain.InboundItem;
 import ai.example.company_tmp.inbound.domain.InboundRepository;
 import ai.example.company_tmp.inbound.feature.RegisterInbound.Request.Item;
 import ai.example.company_tmp.product.domain.ProductRepository;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.springframework.util.Assert;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
+@RequiredArgsConstructor
 public class RegisterInbound {
 
     private final ProductRepository productRepository;
     private final InboundRepository inboundRepository;
 
-    public RegisterInbound(final ProductRepository productRepository,
-        final InboundRepository inboundRepository) {
-        this.productRepository = productRepository;
-        this.inboundRepository = inboundRepository;
-    }
-
-    public void request(final Request request) {
+    @PostMapping("/inbounds")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void request(@RequestBody @Valid final Request request) {
         final Inbound inbound = createInbound(request);
 
         inboundRepository.save(inbound);
@@ -52,31 +60,29 @@ public class RegisterInbound {
         );
     }
 
-    public record Request(String title, String description, LocalDateTime orderRequestedAt,
-                          LocalDateTime estimatedArrivalAt, List<Request.Item> inboundItems) {
+    public record Request(
+        @NotBlank(message = "입고 제목은 필수입니다.")
+        String title,
+        @NotBlank(message = "입고 설명은 필수입니다.")
+        String description,
+        @NotNull(message = "입고 요청일은 필수입니다.")
+        LocalDateTime orderRequestedAt,
+        @NotNull(message = "입고 예정일은 필수입니다.")
+        LocalDateTime estimatedArrivalAt,
+        @NotEmpty(message = "입고 품목은 필수입니다.") List<Request.Item> inboundItems) {
 
-        public Request {
-            Assert.hasText(title, "title 필수입니다.");
-            Assert.hasText(description, "description 필수입니다.");
-            Assert.notNull(orderRequestedAt, "orderRequestedAt 필수입니다.");
-            Assert.notNull(estimatedArrivalAt, "estimatedArrivalAt 필수입니다.");
-            Assert.notEmpty(inboundItems, "입고 품목은 필수입니다.");
-        }
+        public record Item(
+            @NotNull(message = "상품 번호는 필수입니다.")
+            Long productNo,
+            @NotNull(message = "수량은 필수입니다.")
+            @Min(value = 1, message = "수량은 1개 이상이어야 합니다.")
+            Long quantity,
+            @NotNull(message = "단가는 필수입니다.")
+            @Min(value = 0, message = "단가는 0원 이상이어야 합니다.")
+            Long unitPrice,
+            @NotBlank(message = "품목 설명은 필수입니다.")
+            String description) {
 
-        public record Item(Long productNo, Long quantity, Long unitPrice, String description) {
-
-            public Item {
-                Assert.notNull(productNo, "productNo 필수입니다.");
-                Assert.notNull(quantity, "quantity 필수입니다.");
-                if (0 > quantity) {
-                    throw new IllegalArgumentException("quantity는 0보다 작을 수 없습니다.");
-                }
-                Assert.notNull(unitPrice, "unitPrice 필수입니다.");
-                if (0 > unitPrice) {
-                    throw new IllegalArgumentException("unitPrice는 0보다 작을 수 없습니다.");
-                }
-                Assert.notNull(description, "description 필수입니다.");
-            }
         }
     }
 }
