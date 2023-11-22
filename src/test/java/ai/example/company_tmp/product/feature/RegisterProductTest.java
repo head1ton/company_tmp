@@ -19,10 +19,9 @@ class RegisterProductTest extends ApiTest {
     @DisplayName("상품 등록")
     void registerProduct() {
         Scenario.registerProduct().request()
-                .registerProduct().request();
+                .registerProduct().code("code1").request();
 
-
-        assertThat(productRepository.findAll()).hasSize(1);
+        assertThat(productRepository.findAll()).hasSize(2);
     }
 
 }
