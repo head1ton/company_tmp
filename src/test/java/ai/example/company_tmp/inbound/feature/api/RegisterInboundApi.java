@@ -1,8 +1,8 @@
 package ai.example.company_tmp.inbound.feature.api;
 
+import ai.example.company_tmp.common.Scenario;
 import ai.example.company_tmp.inbound.feature.RegisterInbound;
 import ai.example.company_tmp.inbound.feature.RegisterInbound.Request.Item;
-import ai.example.company_tmp.product.common.Scenario;
 import io.restassured.RestAssured;
 import java.time.LocalDateTime;
 import java.util.List;

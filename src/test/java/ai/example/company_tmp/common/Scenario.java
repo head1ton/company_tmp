@@ -1,4 +1,4 @@
-package ai.example.company_tmp.product.common;
+package ai.example.company_tmp.common;
 
 import ai.example.company_tmp.inbound.feature.api.RegisterInboundApi;
 import ai.example.company_tmp.product.feature.api.RegisterProductApi;

@@ -1,6 +1,6 @@
 package ai.example.company_tmp.product.feature.api;
 
-import ai.example.company_tmp.product.common.Scenario;
+import ai.example.company_tmp.common.Scenario;
 import ai.example.company_tmp.product.domain.Category;
 import ai.example.company_tmp.product.domain.TemperatureZone;
 import ai.example.company_tmp.product.feature.RegisterProduct.Request;
@@ -84,7 +84,7 @@ public class RegisterProductApi {
     }
 
     public Scenario request() {
-        Request request = new Request(
+        final Request request = new Request(
             name,
             code,
             description,
