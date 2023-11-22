@@ -9,7 +9,6 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -28,8 +27,21 @@ public class RegisterProduct {
     @ResponseStatus(HttpStatus.CREATED)
     public void request(@RequestBody final Request request) {
         System.out.println("=============== = " + request);
+
+        validateProductCodeExists(request.code);
+
         Product product = request.toDomain();
         productRepository.save(product);
+    }
+
+    private void validateProductCodeExists(final String code) {
+        productRepository.findAll().stream()
+                         .filter(product -> product.getCode().equals(code))
+                         .findFirst()
+                         .ifPresent(product -> {
+                             throw new IllegalArgumentException(
+                                 "이미 등록된 상품 코드입니다. %s".formatted(code));
+                         });
     }
 
     public record Request(
