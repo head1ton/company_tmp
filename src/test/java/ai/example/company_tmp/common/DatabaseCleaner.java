@@ -6,8 +6,10 @@ import jakarta.persistence.Table;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+@Component
 public class DatabaseCleaner implements InitializingBean {
 
     @PersistenceContext
@@ -15,7 +17,7 @@ public class DatabaseCleaner implements InitializingBean {
     private Set<String> tableNames;
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         tableNames = entityManager.getMetamodel().getEntities().stream()
                                   .filter(e -> e.getJavaType().isAnnotationPresent(Table.class))
                                   .map(e -> e.getJavaType().getAnnotation(Table.class).name())

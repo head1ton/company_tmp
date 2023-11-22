@@ -1,20 +1,62 @@
 package ai.example.company_tmp.product.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Comment;
 import org.springframework.util.Assert;
 
+@Getter
+@Entity
+@Table(name = "product")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Comment("상품")
 public class Product {
 
-    private final String name;
-    private final String code;
-    private final String description;
-    private final String brand;
-    private final String maker;
-    private final String origin;
-    private final Category category;
-    private final TemperatureZone temperatureZone;
-    private final Long weightInGrams;
-    private final ProductSize productSize;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "product_no")
+    @Comment("상품 번호")
     private Long id;
+    @Column(name = "name", nullable = false)
+    @Comment("상품명")
+    private String name;
+    @Column(name = "code", nullable = false, unique = true)
+    @Comment("상품코드")
+    private String code;
+    @Column(name = "description", nullable = false)
+    @Comment("상품설명")
+    private String description;
+    @Column(name = "brand", nullable = false)
+    @Comment("브랜드")
+    private String brand;
+    @Column(name = "maker", nullable = false)
+    @Comment("제조사")
+    private String maker;
+    @Column(name = "origin", nullable = false)
+    @Comment("원산지")
+    private String origin;
+    @Column(name = "category", nullable = false)
+    @Comment("카테고리")
+    private Category category;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "temperature_zone", nullable = false)
+    @Comment("온도대")
+    private TemperatureZone temperatureZone;
+    @Column(name = "weight_in_grams", nullable = false)
+    @Comment("무게(그램)")
+    private Long weightInGrams;
+    @Embedded
+    private ProductSize productSize;
 
     public Product(final String name, final String code, final String description,
         final String brand, final String maker,
@@ -39,9 +81,10 @@ public class Product {
     }
 
     private static void validateConstructor(final String name, final String code,
-        final String description, final String brand, final String maker, final String origin,
-        final Category category, final TemperatureZone temperatureZone,
-        final Long weightInGrams, final ProductSize productSize) {
+        final String description,
+        final String brand, final String maker, final String origin, final Category category,
+        final TemperatureZone temperatureZone, final Long weightInGrams,
+        final ProductSize productSize) {
         Assert.hasText(name, "name 필수입니다.");
         Assert.hasText(code, "code 필수입니다.");
         Assert.hasText(description, "description 필수입니다.");
