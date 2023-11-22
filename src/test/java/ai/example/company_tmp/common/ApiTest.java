@@ -12,13 +12,11 @@ public class ApiTest {
 
     @LocalServerPort
     private int port;
-    @Autowired
-    private DatabaseCleaner databaseCleaner;
 
     @BeforeEach
     void setUp() throws Exception {
-        RestAssured.port = port;
-        databaseCleaner.afterPropertiesSet();
-        databaseCleaner.execute();
+        if (RestAssured.UNDEFINED_PORT == RestAssured.port) {
+            RestAssured.port = port;
+        }
     }
 }

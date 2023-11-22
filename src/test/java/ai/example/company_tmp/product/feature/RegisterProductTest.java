@@ -2,6 +2,7 @@ package ai.example.company_tmp.product.feature;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import ai.example.company_tmp.common.ApiTest;
 import ai.example.company_tmp.product.domain.Category;
 import ai.example.company_tmp.product.domain.ProductRepository;
 import ai.example.company_tmp.product.domain.TemperatureZone;
@@ -17,22 +18,10 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class RegisterProductTest {
+class RegisterProductTest extends ApiTest {
 
-    @LocalServerPort
-    private int port;
-
-    private RegisterProduct registerProduct;
     @Autowired
     private ProductRepository productRepository;
-
-    @BeforeEach
-    void setUp() {
-        if (RestAssured.UNDEFINED_PORT == RestAssured.port) {
-            RestAssured.port = port;
-        }
-    }
 
     @Test
     @DisplayName("상품 등록")
