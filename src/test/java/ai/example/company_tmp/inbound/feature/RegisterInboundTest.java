@@ -1,30 +1,57 @@
 package ai.example.company_tmp.inbound.feature;
 
+import ai.example.company_tmp.inbound.domain.InboundRepository;
+import ai.example.company_tmp.product.domain.Category;
+import ai.example.company_tmp.product.domain.Product;
+import ai.example.company_tmp.product.domain.ProductRepository;
+import ai.example.company_tmp.product.domain.ProductSize;
+import ai.example.company_tmp.product.domain.TemperatureZone;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.util.Assert;
+import org.mockito.Mockito;
 
 class RegisterInboundTest {
 
     private RegisterInbound registerInbound;
+    private ProductRepository productRepository;
+    private InboundRepository inboundRepository;
 
     @BeforeEach
     void setUp() {
-        registerInbound = new RegisterInbound();
+        productRepository = Mockito.mock(ProductRepository.class);
+        inboundRepository = new InboundRepository();
+        registerInbound = new RegisterInbound(productRepository, inboundRepository);
     }
 
     @Test
     @DisplayName("입고 등록")
     void registerInbound() {
+        final Product product = new Product(
+            "name",
+            "code",
+            "description",
+            "brand",
+            "maker",
+            "origin",
+            Category.ELECTRONICS,
+            TemperatureZone.ROOM_TEMPERATURE,
+            1000L,
+            new ProductSize(100L, 100L, 100L)
+        );
+
+        Mockito.when(productRepository.findById(Mockito.anyLong()))
+               .thenReturn(Optional.of(product));
+
         final LocalDateTime orderRequestedAt = LocalDateTime.now();
         final LocalDateTime estimatedArrivalAt = LocalDateTime.now().plusDays(1);
         final Long productNo = 1L;
         final Long quantity = 1L;
         final Long unitPrice = 1500L;
-        RegisterInbound.Request.Item inboundItem = new RegisterInbound.Request.Item(
+        final RegisterInbound.Request.Item inboundItem = new RegisterInbound.Request.Item(
             productNo,
             quantity,
             unitPrice,
@@ -42,38 +69,4 @@ class RegisterInboundTest {
         registerInbound.request(request);
     }
 
-    public class RegisterInbound {
-
-        public void request(final Request request) {
-
-        }
-
-        public record Request(String title, String description, LocalDateTime orderRequestedAt,
-                              LocalDateTime estimatedArrivalAt, List<Item> inboundItems) {
-
-            public Request {
-                Assert.hasText(title, "title 필수입니다.");
-                Assert.hasText(description, "description 필수입니다.");
-                Assert.notNull(orderRequestedAt, "orderRequestedAt 필수입니다.");
-                Assert.notNull(estimatedArrivalAt, "estimatedArrivalAt 필수입니다.");
-                Assert.notEmpty(inboundItems, "입고 품목은 필수입니다.");
-            }
-
-            public record Item(Long productNo, Long quantity, Long unitPrice, String description) {
-
-                public Item {
-                    Assert.notNull(productNo, "productNo 필수입니다.");
-                    Assert.notNull(quantity, "quantity 필수입니다.");
-                    if (0 > quantity) {
-                        throw new IllegalArgumentException("quantity는 0보다 작을 수 없습니다.");
-                    }
-                    Assert.notNull(unitPrice, "unitPrice 필수입니다.");
-                    if (0 > unitPrice) {
-                        throw new IllegalArgumentException("unitPrice는 0보다 작을 수 없습니다.");
-                    }
-                    Assert.notNull(description, "description 필수입니다.");
-                }
-            }
-        }
-    }
 }
