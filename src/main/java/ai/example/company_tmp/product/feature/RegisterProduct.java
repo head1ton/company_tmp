@@ -5,8 +5,17 @@ import ai.example.company_tmp.product.domain.Product;
 import ai.example.company_tmp.product.domain.ProductRepository;
 import ai.example.company_tmp.product.domain.ProductSize;
 import ai.example.company_tmp.product.domain.TemperatureZone;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
 public class RegisterProduct {
 
     private final ProductRepository productRepository;
@@ -15,43 +24,43 @@ public class RegisterProduct {
         this.productRepository = productRepository;
     }
 
-    public void request(final Request request) {
+    @PostMapping("/products")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void request(@RequestBody final Request request) {
+        System.out.println("=============== = " + request);
         Product product = request.toDomain();
         productRepository.save(product);
     }
 
-    public record Request(String name, String code, String description, String brand,
-                          String maker, String origin, Category category,
-                          TemperatureZone temperatureZone, Long weightInGrams,
-                          Long widthInMillimeters, Long heightInMillimeters,
-                          Long lengthInMillimeters) {
-
-        public Request {
-            Assert.hasText(name, "name 필수입니다.");
-            Assert.hasText(code, "code 필수입니다.");
-            Assert.hasText(description, "description 필수입니다.");
-            Assert.hasText(brand, "brand 필수입니다.");
-            Assert.hasText(maker, "maker 필수입니다.");
-            Assert.hasText(origin, "origin 필수입니다.");
-            Assert.notNull(category, "category 필수입니다.");
-            Assert.notNull(temperatureZone, "temperature zone 필수입니다.");
-            Assert.notNull(weightInGrams, "weightInGrams 필수입니다.");
-            if (0 > weightInGrams) {
-                throw new IllegalArgumentException("무게는 0보다 작을 수 없습니다.");
-            }
-            Assert.notNull(widthInMillimeters, "가로 길이는 필수입니다.");
-            if (0 > widthInMillimeters) {
-                throw new IllegalArgumentException("가로 길이는 0보다 작을 수 없습니다.");
-            }
-            Assert.notNull(heightInMillimeters, "세로 길이는 필수입니다.");
-            if (0 > heightInMillimeters) {
-                throw new IllegalArgumentException("세로 길이는 0보다 작을 수 없습니다.");
-            }
-            Assert.notNull(lengthInMillimeters, "길이는 필수입니다.");
-            if (0 > lengthInMillimeters) {
-                throw new IllegalArgumentException("길이는 0보다 작을 수 없습니다.");
-            }
-        }
+    public record Request(
+        @NotBlank(message = "상품명은 필수입니다.")
+        String name,
+        @NotBlank(message = "상품코드는 필수입니다.")
+        String code,
+        @NotBlank(message = "상품설명은 필수입니다.")
+        String description,
+        @NotBlank(message = "브랜드는 필수입니다.")
+        String brand,
+        @NotBlank(message = "제조사는 필수입니다.")
+        String maker,
+        @NotBlank(message = "원산지는 필수입니다.")
+        String origin,
+        @NotNull(message = "카테고리는 필수입니다.")
+        Category category,
+        @NotNull(message = "온도대는 필수입니다.")
+        TemperatureZone temperatureZone,
+        @NotNull(message = "무게는 필수입니다.")
+        @Min(value = 0, message = "무게는 0보다 작을 수 없습니다.")
+        Long weightInGrams,
+        @NotNull(message = "상품의 너비는 필수입니다.")
+        @Min(value = 0, message = "상품의 너비는 0보다 작을 수 없습니다.")
+        Long widthInMillimeters,
+        @NotNull(message = "상품의 높이는 필수입니다.")
+        @Min(value = 0, message = "상품의 높이는 0보다 작을 수 없습니다.")
+        Long heightInMillimeters,
+        @NotNull(message = "상품의 길이는 필수입니다.")
+        @Min(value = 0, message = "상품의 길이는 0보다 작을 수 없습니다.")
+        Long lengthInMillimeters) {
 
         public Product toDomain() {
             return new Product(
@@ -64,8 +73,10 @@ public class RegisterProduct {
                 category,
                 temperatureZone,
                 weightInGrams,
-                new ProductSize(widthInMillimeters, heightInMillimeters, lengthInMillimeters)
+                new ProductSize(widthInMillimeters, heightInMillimeters,
+                    lengthInMillimeters)
             );
         }
     }
+
 }

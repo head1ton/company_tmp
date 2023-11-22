@@ -37,7 +37,7 @@ dependencies {
     // Logging
     implementation 'p6spy:p6spy:3.9.1'
     // API 테스트용
-    testImplementation 'io.rest-assured:rest-assured:5.3.1'
+    testImplementation 'io.rest-assured:rest-assured'
 }
 
 tasks.named('bootBuildImage') {

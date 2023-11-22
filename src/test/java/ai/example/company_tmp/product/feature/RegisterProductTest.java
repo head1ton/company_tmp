@@ -5,28 +5,42 @@ import static org.assertj.core.api.Assertions.assertThat;
 import ai.example.company_tmp.product.domain.Category;
 import ai.example.company_tmp.product.domain.ProductRepository;
 import ai.example.company_tmp.product.domain.TemperatureZone;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class RegisterProductTest {
 
+    @LocalServerPort
+    private int port;
+
     private RegisterProduct registerProduct;
+    @Autowired
     private ProductRepository productRepository;
 
     @BeforeEach
     void setUp() {
-        productRepository = new ProductRepository();
-        registerProduct = new RegisterProduct(productRepository);
+        if (RestAssured.UNDEFINED_PORT == RestAssured.port) {
+            RestAssured.port = port;
+        }
     }
 
     @Test
     @DisplayName("상품 등록")
     void registerProduct() {
-        long weightInGrams = 1000L;
-        long widthInMillimeters = 100L;
-        long heightInMillimeters = 100L;
-        long lengthInMillimeters = 100L;
+        Long weightInGrams = 1000L;
+        Long widthInMillimeters = 100L;
+        Long heightInMillimeters = 100L;
+        Long lengthInMillimeters = 100L;
         String name = "name";
         String code = "code";
         String description = "description";
@@ -35,7 +49,7 @@ public class RegisterProductTest {
         String origin = "origin";
         Category category = Category.ELECTRONICS;
         TemperatureZone temperatureZone = TemperatureZone.ROOM_TEMPERATURE;
-        final RegisterProduct.Request request = new RegisterProduct.Request(
+        RegisterProduct.Request request = new RegisterProduct.Request(
             name,
             code,
             description,
@@ -44,12 +58,20 @@ public class RegisterProductTest {
             origin,
             category,
             temperatureZone,
-            weightInGrams,  // gram
-            widthInMillimeters,   // 너비 mm
-            heightInMillimeters,  // 높이 mm
-            lengthInMillimeters // 길이 mm
+            weightInGrams,
+            widthInMillimeters,
+            heightInMillimeters,
+            lengthInMillimeters
         );
-        registerProduct.request(request);
+//        registerProduct.request(request);
+
+        RestAssured.given().log().all()
+                   .contentType(ContentType.JSON)
+                   .body(request)
+                   .when()
+                   .post("/products")
+                   .then().log().all()
+                   .statusCode(HttpStatus.CREATED.value());
 
         assertThat(productRepository.findAll()).hasSize(1);
     }
