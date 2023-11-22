@@ -1,14 +1,13 @@
 package ai.example.company_tmp.inbound.feature;
 
+import static ai.example.company_tmp.product.fixture.ProductFixture.aProduct;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.mock;
+
 import ai.example.company_tmp.inbound.domain.InboundRepository;
-import ai.example.company_tmp.product.domain.Category;
-import ai.example.company_tmp.product.domain.Product;
 import ai.example.company_tmp.product.domain.ProductRepository;
-import ai.example.company_tmp.product.domain.ProductSize;
-import ai.example.company_tmp.product.domain.TemperatureZone;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +21,7 @@ class RegisterInboundTest {
 
     @BeforeEach
     void setUp() {
-        productRepository = Mockito.mock(ProductRepository.class);
+        productRepository = mock(ProductRepository.class);
         inboundRepository = new InboundRepository();
         registerInbound = new RegisterInbound(productRepository, inboundRepository);
     }
@@ -30,21 +29,9 @@ class RegisterInboundTest {
     @Test
     @DisplayName("입고 등록")
     void registerInbound() {
-        final Product product = new Product(
-            "name",
-            "code",
-            "description",
-            "brand",
-            "maker",
-            "origin",
-            Category.ELECTRONICS,
-            TemperatureZone.ROOM_TEMPERATURE,
-            1000L,
-            new ProductSize(100L, 100L, 100L)
-        );
 
-        Mockito.when(productRepository.findById(Mockito.anyLong()))
-               .thenReturn(Optional.of(product));
+        Mockito.when(productRepository.getBy(anyLong()))
+               .thenReturn(aProduct().build());
 
         final LocalDateTime orderRequestedAt = LocalDateTime.now();
         final LocalDateTime estimatedArrivalAt = LocalDateTime.now().plusDays(1);
