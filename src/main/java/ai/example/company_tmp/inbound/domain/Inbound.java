@@ -1,5 +1,6 @@
 package ai.example.company_tmp.inbound.domain;
 
+import com.google.common.annotations.VisibleForTesting;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,7 +31,7 @@ public class Inbound {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "inbound_no")
     @Comment("입고 번호")
-    private Long id;
+    private Long inboundNo;
     @Column(name = "title", nullable = false)
     @Comment("입고명")
     private String title;
@@ -65,6 +66,18 @@ public class Inbound {
         }
     }
 
+    @VisibleForTesting
+    Inbound(
+        final Long inboundNo,
+        final String title,
+        final String description,
+        final LocalDateTime orderRequestedAt,
+        final LocalDateTime estimatedArrivalAt,
+        final List<InboundItem> inboundItems) {
+        this(title, description, orderRequestedAt, estimatedArrivalAt, inboundItems);
+        this.inboundNo = inboundNo;
+    }
+
     private static void validateConstructor(final String title, final String description,
         final LocalDateTime orderRequestedAt, final LocalDateTime estimatedArrivalAt,
         final List<InboundItem> inboundItems) {
@@ -75,12 +88,12 @@ public class Inbound {
         Assert.notEmpty(inboundItems, "inboundItems 필수입니다.");
     }
 
-    public void assignId(final Long id) {
-        this.id = id;
+    public void assignId(final Long inboundNo) {
+        this.inboundNo = inboundNo;
     }
 
     public Long getId() {
-        return id;
+        return inboundNo;
     }
 
     public void confirmed() {

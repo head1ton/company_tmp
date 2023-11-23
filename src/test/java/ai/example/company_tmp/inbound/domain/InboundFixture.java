@@ -6,6 +6,7 @@ import java.util.List;
 
 public class InboundFixture {
 
+    private Long inboundNo = 1L;
     private String title = "상품명";
     private String description = "상품코드";
     private LocalDateTime orderRequestedAt = LocalDateTime.now();
@@ -41,13 +42,23 @@ public class InboundFixture {
         return this;
     }
 
+    public InboundFixture inboundNo(final Long inboundNo) {
+        this.inboundNo = inboundNo;
+        return this;
+    }
+
     public Inbound build() {
         return new Inbound(
+            inboundNo,
             title,
             description,
             orderRequestedAt,
             estimatedArrivalAt,
-            inboundItems.stream().map(InboundItemFixture::build).toList()
+            buildInboundItems()
         );
+    }
+
+    private List<InboundItem> buildInboundItems() {
+        return inboundItems.stream().map(InboundItemFixture::build).toList();
     }
 }
