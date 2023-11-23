@@ -2,38 +2,39 @@ package ai.example.company_tmp.inbound.feature;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import ai.example.company_tmp.common.ApiTest;
+import ai.example.company_tmp.common.Scenario;
 import ai.example.company_tmp.inbound.domain.Inbound;
-import ai.example.company_tmp.inbound.domain.InboundFixture;
 import ai.example.company_tmp.inbound.domain.InboundRepository;
 import ai.example.company_tmp.inbound.domain.InboundStatus;
-import org.junit.jupiter.api.BeforeEach;
+import io.restassured.RestAssured;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
-public class ConfirmInboundTest {
+public class ConfirmInboundTest extends ApiTest {
 
-    private ConfirmInbound confirmInbound;
+    @Autowired
     private InboundRepository inboundRepository;
-
-    @BeforeEach
-    void setUp() {
-        inboundRepository = Mockito.mock(InboundRepository.class);
-        confirmInbound = new ConfirmInbound(inboundRepository);
-    }
 
     @Test
     @DisplayName("입고 승인")
     void confirmInbound() {
+        Scenario.registerProduct().request()
+                .registerInbound().request();
+
         final Long inboundNo = 1L;
 
-        final Inbound inbound = InboundFixture.anInbound().build();
+        RestAssured.given().log().all()
+                   .contentType(MediaType.APPLICATION_JSON_VALUE)
+                   .when()
+                   .post("/inbounds/{inboundNo}/confirm", inboundNo)
+                   .then().log().all()
+                   .statusCode(HttpStatus.OK.value());
 
-        Mockito.when(inboundRepository.getBy(inboundNo))
-               .thenReturn(inbound);
-
-        confirmInbound.request(inboundNo);
-
+        final Inbound inbound = inboundRepository.getBy(inboundNo);
         assertThat(inbound.getStatus()).isEqualTo(InboundStatus.CONFIRMED);
     }
 
