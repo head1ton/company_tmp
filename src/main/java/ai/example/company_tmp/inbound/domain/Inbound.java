@@ -1,8 +1,11 @@
 package ai.example.company_tmp.inbound.domain;
 
+import com.google.common.annotations.VisibleForTesting;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -12,23 +15,23 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.springframework.util.Assert;
 
 @Entity
+@Getter
 @Table(name = "inbound")
 @Comment("입고")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Inbound {
 
-    @OneToMany(mappedBy = "inbound", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<InboundItem> inboundItems = new ArrayList<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "inbound_no")
     @Comment("입고 번호")
-    private Long id;
+    private Long inboundNo;
     @Column(name = "title", nullable = false)
     @Comment("입고명")
     private String title;
@@ -41,6 +44,12 @@ public class Inbound {
     @Column(name = "estimated_arrival_at", nullable = false)
     @Comment("입고 예정 일시")
     private LocalDateTime estimatedArrivalAt;
+    @OneToMany(mappedBy = "inbound", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<InboundItem> inboundItems = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    @Comment("입고 진행 상태")
+    private InboundStatus status = InboundStatus.REQUESTED;
 
     public Inbound(final String title, final String description,
         final LocalDateTime orderRequestedAt, final LocalDateTime estimatedArrivalAt,
@@ -57,6 +66,18 @@ public class Inbound {
         }
     }
 
+    @VisibleForTesting
+    Inbound(
+        final Long inboundNo,
+        final String title,
+        final String description,
+        final LocalDateTime orderRequestedAt,
+        final LocalDateTime estimatedArrivalAt,
+        final List<InboundItem> inboundItems) {
+        this(title, description, orderRequestedAt, estimatedArrivalAt, inboundItems);
+        this.inboundNo = inboundNo;
+    }
+
     private static void validateConstructor(final String title, final String description,
         final LocalDateTime orderRequestedAt, final LocalDateTime estimatedArrivalAt,
         final List<InboundItem> inboundItems) {
@@ -67,11 +88,22 @@ public class Inbound {
         Assert.notEmpty(inboundItems, "inboundItems 필수입니다.");
     }
 
-    public void assignId(final Long id) {
-        this.id = id;
+    public void assignId(final Long inboundNo) {
+        this.inboundNo = inboundNo;
     }
 
     public Long getId() {
-        return id;
+        return inboundNo;
+    }
+
+    public void confirmed() {
+        validateConfirmStatus();
+        status = InboundStatus.CONFIRMED;
+    }
+
+    private void validateConfirmStatus() {
+        if (status != InboundStatus.REQUESTED) {
+            throw new IllegalStateException("입고 요청 상태가 아닙니다.");
+        }
     }
 }
