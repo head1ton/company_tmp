@@ -7,12 +7,9 @@ import ai.example.company_tmp.common.Scenario;
 import ai.example.company_tmp.inbound.domain.Inbound;
 import ai.example.company_tmp.inbound.domain.InboundRepository;
 import ai.example.company_tmp.inbound.domain.InboundStatus;
-import io.restassured.RestAssured;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 
 public class ConfirmInboundTest extends ApiTest {
 
@@ -22,17 +19,11 @@ public class ConfirmInboundTest extends ApiTest {
     @Test
     @DisplayName("입고 승인")
     void confirmInbound() {
-        Scenario.registerProduct().request()
-                .registerInbound().request();
-
         final Long inboundNo = 1L;
 
-        RestAssured.given().log().all()
-                   .contentType(MediaType.APPLICATION_JSON_VALUE)
-                   .when()
-                   .post("/inbounds/{inboundNo}/confirm", inboundNo)
-                   .then().log().all()
-                   .statusCode(HttpStatus.OK.value());
+        Scenario.registerProduct().request()
+                .registerInbound().request()
+                .confirmInbound().inboundNo(inboundNo).request();
 
         final Inbound inbound = inboundRepository.getBy(inboundNo);
         assertThat(inbound.getStatus()).isEqualTo(InboundStatus.CONFIRMED);
