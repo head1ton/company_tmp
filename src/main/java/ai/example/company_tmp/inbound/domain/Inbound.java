@@ -58,7 +58,7 @@ public class Inbound {
     public Inbound(final String title, final String description,
         final LocalDateTime orderRequestedAt, final LocalDateTime estimatedArrivalAt,
         final List<InboundItem> inboundItems) {
-        validateConstructor(title, description, orderRequestedAt, estimatedArrivalAt, inboundItems);
+        validateRegisterLPN(title, description, orderRequestedAt, estimatedArrivalAt, inboundItems);
 
         this.title = title;
         this.description = description;
@@ -83,7 +83,7 @@ public class Inbound {
         this.status = inboundStatus;
     }
 
-    private static void validateConstructor(final String title, final String description,
+    private static void validateRegisterLPN(final String title, final String description,
         final LocalDateTime orderRequestedAt, final LocalDateTime estimatedArrivalAt,
         final List<InboundItem> inboundItems) {
         Assert.hasText(title, "title 필수입니다.");
@@ -101,9 +101,11 @@ public class Inbound {
         return inboundNo;
     }
 
-    public void confirmed() {
-        validateConfirmStatus();
-        status = InboundStatus.CONFIRMED;
+    private static void validateRegisterLPN(final Long inboundItemNo, final String lpnBarcode,
+        final LocalDateTime expirationAt) {
+        Assert.notNull(inboundItemNo, "입고 품목 번호는 필수입니다.");
+        Assert.hasText(lpnBarcode, "LPN 바코드는 필수입니다.");
+        Assert.notNull(expirationAt, "유통기한은 필수입니다.");
     }
 
     private void validateConfirmStatus() {
@@ -122,5 +124,41 @@ public class Inbound {
         if (status != InboundStatus.REQUESTED) {
             throw new IllegalStateException("입고 요청 상태가 아닙니다.");
         }
+    }
+
+    public void confirmed() {
+        if (status != InboundStatus.REQUESTED) {
+            throw new IllegalStateException("입고 요청 상태가 아닙니다.");
+        }
+
+        status = InboundStatus.CONFIRMED;
+    }
+
+    public void registerLPN(
+        final Long inboundItemNo,
+        final String lpnBarcode,
+        final LocalDateTime expirationAt) {
+        validateRegisterLPN(inboundItemNo, lpnBarcode, expirationAt);
+
+        final InboundItem inboundItem = getInboundItemBy(inboundItemNo);
+        inboundItem.registerLPN(lpnBarcode, expirationAt);
+    }
+
+    private InboundItem getInboundItemBy(final Long inboundItemNo) {
+        return inboundItems.stream()
+                           .filter(
+                               ii -> ii.getInboundItemNo().equals(inboundItemNo))
+                           .findFirst()
+                           .orElseThrow(() -> new IllegalArgumentException(
+                               "해당 입고 품목이 없습니다. %d".formatted(inboundItemNo)));
+    }
+
+    public InboundItem testingGetInboundItemBy(final Long inboundItemNo) {
+        return inboundItems.stream()
+                           .filter(
+                               ii -> ii.getInboundItemNo().equals(inboundItemNo))
+                           .findFirst()
+                           .orElseThrow(() -> new IllegalArgumentException(
+                               "해당 입고 품목이 없습니다. %d".formatted(inboundItemNo)));
     }
 }

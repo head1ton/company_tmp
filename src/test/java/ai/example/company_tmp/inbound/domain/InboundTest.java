@@ -3,6 +3,7 @@ package ai.example.company_tmp.inbound.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -54,6 +55,18 @@ class InboundTest {
                                                                             IllegalStateException.class)
                                                                         .hasMessageContaining(
                                                                             "입고 요청 상태가 아닙니다.");
+
+    }
+
+    @Test
+    @DisplayName("LPN 등록")
+    void registerLPN() {
+        final Inbound inbound = InboundFixture.anInboundWithConfirmed().build();  // 입고 확정 상태만.
+        final Long inboundItemNo = 1L;
+        final String lpnBarcode = "LPN-0001";
+        final LocalDateTime expirationAt = LocalDateTime.now().plusDays(1);
+
+        inbound.registerLPN(inboundItemNo, lpnBarcode, expirationAt);
 
     }
 

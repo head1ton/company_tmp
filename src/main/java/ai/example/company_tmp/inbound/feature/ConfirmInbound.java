@@ -16,7 +16,7 @@ public class ConfirmInbound {
 
     @PostMapping("/inbounds/{inboundNo}/confirm")
     @Transactional
-    public void request(@PathVariable final Long inboundNo) {
+    public void request(@PathVariable(name = "inboundNo") final Long inboundNo) {
         final Inbound inbound = inboundRepository.getBy(inboundNo);
 
         inbound.confirmed();
