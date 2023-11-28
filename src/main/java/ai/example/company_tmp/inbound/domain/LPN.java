@@ -10,28 +10,31 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.springframework.util.Assert;
 
 @Entity
 @Table(name = "lpn")
 @Comment("LPN")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LPN {
 
-    @Column(name = "lpn_barcode", nullable = false, unique = true)
-    @Comment("LPN 바코드 (중복 불가)")
-    private final String lpnBarcode;
-    @Column(name = "expiration_at", nullable = false)
-    @Comment("유통기한")
-    private final LocalDateTime expirationAt;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "inbound_item_id", nullable = false)
-    @Comment("입고 아이템 ID")
-    private final InboundItem inboundItem;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("LPN 번호")
     private Long lpnNo;
+    @Column(name = "lpn_barcode", nullable = false, unique = true)
+    @Comment("LPN 바코드 (중복 불가)")
+    private String lpnBarcode;
+    @Column(name = "expiration_at", nullable = false)
+    @Comment("유통기한")
+    private LocalDateTime expirationAt;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "inbound_item_id", nullable = false)
+    @Comment("입고 아이템 ID")
+    private InboundItem inboundItem;
 
     public LPN(
         final String lpnBarcode,

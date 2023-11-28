@@ -2,12 +2,17 @@ package ai.example.company_tmp.inbound.feature;
 
 import ai.example.company_tmp.inbound.domain.Inbound;
 import ai.example.company_tmp.inbound.domain.InboundRepository;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Component
+@RestController
 public class RegisterLPN {
 
     private final InboundRepository inboundRepository;
@@ -16,25 +21,23 @@ public class RegisterLPN {
         this.inboundRepository = inboundRepository;
     }
 
+    @PostMapping("/inbounds/inbound-items/{inboundItemNo}/lpn")
     @Transactional
-    public void request(final Request request) {
-        final Inbound inbound = inboundRepository.getByInboundItemNo(request.inboundItemNo);
+    public void request(
+        @PathVariable(name = "inboundItemNo") final Long inboundItemNo,
+        @RequestBody @Valid final Request request) {
+        final Inbound inbound = inboundRepository.getByInboundItemNo(inboundItemNo);
 
         inbound.registerLPN(
-            request.inboundItemNo,
+            inboundItemNo,
             request.lpnBarcode,
             request.expirationAt);
     }
 
     public record Request(
-        Long inboundItemNo,
+        @NotBlank(message = "LPN 바코드는 필수입니다.")
         String lpnBarcode,
+        @NotNull(message = "유통기한은 필수입니다.")
         LocalDateTime expirationAt) {
-
-        public Request {
-            Assert.notNull(inboundItemNo, "LPN을 등록할 입고 상품 번호는 필수입니다.");
-            Assert.hasText(lpnBarcode, "LPN 바코드는 필수입니다.");
-            Assert.notNull(expirationAt, "유통기한은 필수입니다.");
-        }
     }
 }
