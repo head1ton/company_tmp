@@ -2,6 +2,7 @@ package ai.example.company_tmp.inbound.feature;
 
 import ai.example.company_tmp.inbound.domain.Inbound;
 import ai.example.company_tmp.inbound.domain.InboundRepository;
+import ai.example.company_tmp.inbound.domain.LPNRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -16,9 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class RegisterLPN {
 
     private final InboundRepository inboundRepository;
+    private final LPNRepository lPNRepository;
 
-    public RegisterLPN(final InboundRepository inboundRepository) {
+    public RegisterLPN(final InboundRepository inboundRepository,
+        final LPNRepository lPNRepository) {
         this.inboundRepository = inboundRepository;
+        this.lPNRepository = lPNRepository;
     }
 
     @PostMapping("/inbounds/inbound-items/{inboundItemNo}/lpn")
@@ -26,12 +30,23 @@ public class RegisterLPN {
     public void request(
         @PathVariable(name = "inboundItemNo") final Long inboundItemNo,
         @RequestBody @Valid final Request request) {
+
+        checkIfLPNBarcodeAlreadyExists(request);
+
         final Inbound inbound = inboundRepository.getByInboundItemNo(inboundItemNo);
 
         inbound.registerLPN(
             inboundItemNo,
             request.lpnBarcode,
             request.expirationAt);
+    }
+
+    private void checkIfLPNBarcodeAlreadyExists(final Request request) {
+        lPNRepository.findByLPNBarcode(request.lpnBarcode).ifPresent(
+            lpn -> {
+                throw new LPNBarcodeAlreadyExistsException(request.lpnBarcode);
+            }
+        );
     }
 
     public record Request(

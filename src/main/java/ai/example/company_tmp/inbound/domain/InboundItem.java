@@ -51,6 +51,7 @@ public class InboundItem {
     @JoinColumn(name = "inbound_no", nullable = false)
     @Comment("입고 번호")
     private Inbound inbound;
+    @Getter(AccessLevel.PROTECTED)
     @OneToMany(mappedBy = "inboundItem", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<LPN> lpnList = new ArrayList<>();
 

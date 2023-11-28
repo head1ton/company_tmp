@@ -4,8 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.transaction.annotation.Transactional;
 
 class InboundTest {
 
@@ -55,7 +57,6 @@ class InboundTest {
                                                                             IllegalStateException.class)
                                                                         .hasMessageContaining(
                                                                             "입고 요청 상태가 아닙니다.");
-
     }
 
     @Test
@@ -68,6 +69,42 @@ class InboundTest {
 
         inbound.registerLPN(inboundItemNo, lpnBarcode, expirationAt);
 
+        final InboundItem inboundItem = inbound.testingGetInboundItemBy(inboundItemNo);
+        final List<LPN> lpns = inboundItem.testingGetLpnList();
+
+        assertThat(lpns).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("LPN 등록 실패 - 입고 확정 상태가 아니라면 예외가 발생한다.")
+    @Transactional
+    void fail_invalid_registerLPN() {
+
+        final Inbound inbound = InboundFixture.anInbound().build();
+        final Long inboundItemNo = 1L;
+        final String lpnBarcode = "LPN-0001";
+        final LocalDateTime expirationAt = LocalDateTime.now().plusDays(1);
+
+        assertThatThrownBy(() -> {
+            inbound.registerLPN(inboundItemNo, lpnBarcode, expirationAt);
+        }).isInstanceOf(IllegalStateException.class)
+          .hasMessageContaining("입고 확정 상태가 아닙니다.");
+    }
+
+    @Test
+    @DisplayName("LPN 등록 실패 - 유통기한 예외 발생")
+    @Transactional
+    void fail_expire_registerLPN() {
+
+        final Inbound inbound = InboundFixture.anInboundWithConfirmed().build();
+        final Long inboundItemNo = 1L;
+        final String lpnBarcode = "LPN-0001";
+        final LocalDateTime expirationAt = LocalDateTime.now();
+
+        assertThatThrownBy(() -> {
+            inbound.registerLPN(inboundItemNo, lpnBarcode, expirationAt);
+        }).isInstanceOf(IllegalStateException.class)
+          .hasMessageContaining("유통기한은 현재 시간보다 이전 일 수 없습니다.");
     }
 
 }

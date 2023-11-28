@@ -48,10 +48,9 @@ class RegisterLPNTest extends ApiTest {
                    .then().log().all()
                    .statusCode(HttpStatus.OK.value());
 
-//        registerLPN.request(inboundItemNo, request);
-
         final Inbound inbound = inboundRepository.findByInboundItemNo(inboundItemNo).get();
         assertThat(inbound.testingGetInboundItemBy(inboundItemNo).testingGetLpnList()).hasSize(1);
     }
+
 
 }

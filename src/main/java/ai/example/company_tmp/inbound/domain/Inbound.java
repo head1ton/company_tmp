@@ -21,7 +21,6 @@ import org.hibernate.annotations.Comment;
 import org.springframework.util.Assert;
 
 @Entity
-@Getter
 @Table(name = "inbound")
 @Comment("입고")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -49,6 +48,7 @@ public class Inbound {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     @Comment("입고 진행 상태")
+    @Getter
     private InboundStatus status = InboundStatus.REQUESTED;
     @Column(name = "rejection_reason")
     @Comment("입고 거부 사유")
@@ -93,23 +93,22 @@ public class Inbound {
         Assert.notEmpty(inboundItems, "inboundItems 필수입니다.");
     }
 
-    public void assignId(final Long inboundNo) {
-        this.inboundNo = inboundNo;
-    }
-
-    public Long getId() {
-        return inboundNo;
-    }
-
-    private static void validateRegisterLPN(final Long inboundItemNo, final String lpnBarcode,
+    private void validateRegisterLPN(
+        final Long inboundItemNo,
+        final String lpnBarcode,
         final LocalDateTime expirationAt) {
+
+        if (status != InboundStatus.CONFIRMED) {
+            throw new IllegalStateException("입고 확정 상태가 아닙니다.");
+        }
+
         Assert.notNull(inboundItemNo, "입고 품목 번호는 필수입니다.");
         Assert.hasText(lpnBarcode, "LPN 바코드는 필수입니다.");
         Assert.notNull(expirationAt, "유통기한은 필수입니다.");
-    }
 
-    private void validateConfirmStatus() {
-        validateRejectStatus(rejectionReason);
+        if (expirationAt.isBefore(LocalDateTime.now())) {
+            throw new IllegalStateException("유통기한은 현재 시간보다 이전 일 수 없습니다.");
+        }
     }
 
     public void reject(final String rejectionReason) {
