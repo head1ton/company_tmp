@@ -2,6 +2,7 @@ package ai.example.company_tmp.inbound.domain;
 
 import ai.example.company_tmp.product.domain.Product;
 import com.google.common.annotations.VisibleForTesting;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -10,8 +11,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.springframework.util.Assert;
@@ -26,6 +32,7 @@ public class InboundItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("입고 상품 번호")
     @Column(name = "inbound_item_no")
+    @Getter(AccessLevel.PROTECTED)
     private Long inboundItemNo;
     @Comment("상품")
     @JoinColumn(name = "product_no", nullable = false)
@@ -44,6 +51,9 @@ public class InboundItem {
     @JoinColumn(name = "inbound_no", nullable = false)
     @Comment("입고 번호")
     private Inbound inbound;
+    @Getter(AccessLevel.PROTECTED)
+    @OneToMany(mappedBy = "inboundItem", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<LPN> lpnList = new ArrayList<>();
 
     public InboundItem(final Product product, final Long quantity, final Long unitPrice,
         final String description) {
@@ -83,5 +93,23 @@ public class InboundItem {
     public void assignInbound(final Inbound inbound) {
         Assert.notNull(inbound, "입고는 필수입니다.");
         this.inbound = inbound;
+    }
+
+    public void registerLPN(final String lpnBarcode, final LocalDateTime expirationAt) {
+        validateRegisterLPN(lpnBarcode, expirationAt);
+        lpnList.add(newLPN(lpnBarcode, expirationAt));
+    }
+
+    private void validateRegisterLPN(final String lpnBarcode, final LocalDateTime expirationAt) {
+        Assert.hasText(lpnBarcode, "LPN 바코드는 필수입니다.");
+        Assert.notNull(expirationAt, "유통기한은 필수입니다.");
+    }
+
+    private LPN newLPN(final String lpnBarcode, final LocalDateTime expirationAt) {
+        return new LPN(lpnBarcode, expirationAt, this);
+    }
+
+    public List<LPN> testingGetLpnList() {
+        return lpnList;
     }
 }
