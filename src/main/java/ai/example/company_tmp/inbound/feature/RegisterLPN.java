@@ -21,6 +21,7 @@ public class RegisterLPN {
     private final InboundRepository inboundRepository;
     private final LPNRepository lPNRepository;
 
+
     @PostMapping("/inbounds/inbound-items/{inboundItemNo}/lpn")
     @Transactional
     public void request(
