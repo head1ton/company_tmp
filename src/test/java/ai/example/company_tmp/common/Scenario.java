@@ -2,6 +2,7 @@ package ai.example.company_tmp.common;
 
 import ai.example.company_tmp.inbound.feature.api.ConfirmInboundApi;
 import ai.example.company_tmp.inbound.feature.api.RegisterInboundApi;
+import ai.example.company_tmp.inbound.feature.api.RegisterLPNApi;
 import ai.example.company_tmp.inbound.feature.api.RejectInboundApi;
 import ai.example.company_tmp.product.feature.api.RegisterProductApi;
 
@@ -19,7 +20,11 @@ public class Scenario {
         return new ConfirmInboundApi();
     }
 
-    public RejectInboundApi rejectInbound() {
+    public static RejectInboundApi rejectInbound() {
         return new RejectInboundApi();
+    }
+
+    public static RegisterLPNApi registerLPN() {
+        return new RegisterLPNApi();
     }
 }
