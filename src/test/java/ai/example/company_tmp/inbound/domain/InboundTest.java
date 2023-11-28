@@ -75,20 +75,31 @@ class InboundTest {
         assertThat(lpns).hasSize(1);
     }
 
+    private static void assertFailLPNRegister(
+        final Inbound inbound,
+        final LocalDateTime expirationAt,
+        final Class<?> exceptionClass,
+        final String errorMessage) {
+
+        final Long inboundItemNo = 1L;
+        final String lpnBarcode = "LPN-0001";
+
+        assertThatThrownBy(() -> {
+            inbound.registerLPN(inboundItemNo, lpnBarcode, expirationAt);
+        }).isInstanceOf(exceptionClass)
+          .hasMessageContaining(errorMessage);
+    }
+
     @Test
     @DisplayName("LPN 등록 실패 - 입고 확정 상태가 아니라면 예외가 발생한다.")
     @Transactional
     void fail_invalid_registerLPN() {
 
-        final Inbound inbound = InboundFixture.anInbound().build();
-        final Long inboundItemNo = 1L;
-        final String lpnBarcode = "LPN-0001";
-        final LocalDateTime expirationAt = LocalDateTime.now().plusDays(1);
-
-        assertThatThrownBy(() -> {
-            inbound.registerLPN(inboundItemNo, lpnBarcode, expirationAt);
-        }).isInstanceOf(IllegalStateException.class)
-          .hasMessageContaining("입고 확정 상태가 아닙니다.");
+        assertFailLPNRegister(
+            InboundFixture.anInbound().build(),
+            LocalDateTime.now().plusDays(1),
+            IllegalStateException.class,
+            "입고 확정 상태가 아닙니다.");
     }
 
     @Test
@@ -96,15 +107,12 @@ class InboundTest {
     @Transactional
     void fail_expire_registerLPN() {
 
-        final Inbound inbound = InboundFixture.anInboundWithConfirmed().build();
-        final Long inboundItemNo = 1L;
-        final String lpnBarcode = "LPN-0001";
-        final LocalDateTime expirationAt = LocalDateTime.now();
-
-        assertThatThrownBy(() -> {
-            inbound.registerLPN(inboundItemNo, lpnBarcode, expirationAt);
-        }).isInstanceOf(IllegalStateException.class)
-          .hasMessageContaining("유통기한은 현재 시간보다 이전 일 수 없습니다.");
+        assertFailLPNRegister(
+            InboundFixture.anInboundWithConfirmed().build(),
+            LocalDateTime.now(),
+            IllegalStateException.class,
+            "유통기한은 현재 시간보다 이전 일 수 없습니다."
+        );
     }
 
 }
