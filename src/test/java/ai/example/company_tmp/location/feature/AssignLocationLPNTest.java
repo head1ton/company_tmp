@@ -39,8 +39,10 @@ class AssignLocationLPNTest extends ApiTest {
 
         Scenario.assignLocationLPN().build();
 
-//        assignLocationLPN.request(request);
+        assertAssignLocationLPN();
+    }
 
+    private void assertAssignLocationLPN() {
         final Location location = locationRepository.getByLocationBarcode("A-1-1");
         final List<LocationLPN> locationLPNList = location.getLocationLPNList();
         final LocationLPN locationLPN = locationLPNList.get(0);
