@@ -25,4 +25,8 @@ public class LocationLPN {
     public LPN getLPN() {
         return lpn;
     }
+
+    public boolean matchLpnToLocation(final LPN lpn) {
+        return this.lpn.equals(lpn);
+    }
 }
