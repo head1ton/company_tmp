@@ -16,10 +16,13 @@ class RegisterLocationTest {
     @Test
     @DisplayName("로케이션을 등록한다.")
     void registerLocation() {
-
+        registerLocation.request();
     }
 
     public class RegisterLocation {
 
+        public void request() {
+            throw new UnsupportedOperationException("Unsupported request");
+        }
     }
 }
