@@ -1,11 +1,14 @@
 package ai.example.company_tmp.location.domain;
 
 import ai.example.company_tmp.inbound.domain.LPN;
+import lombok.Getter;
 
 public class LocationLPN {
 
     private final Location location;
+    @Getter
     private final LPN lpn;
+    @Getter
     private Long inventoryQuantity;
 
     public LocationLPN(final Location location, final LPN lpn) {
