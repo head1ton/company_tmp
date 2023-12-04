@@ -1,13 +1,42 @@
 package ai.example.company_tmp.location.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Comment;
 import org.springframework.util.Assert;
 
+@Entity
+@Table(name = "location")
+@Comment("로케이션")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Location {
 
-    private final String locationBarcode;
-    private final StorageType storageType;
-    private final UsagePurpose usagePurpose;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
+    @Column(name = "location_id")
+    @Comment("로케이션 번호")
     private Long locationNo;
+    @Column(name = "location_barcode", nullable = false)
+    @Comment("로케이션 바코드")
+    private String locationBarcode;
+    @Column(name = "storage_type", nullable = false)
+    @Comment("보관 타입")
+    @Enumerated(EnumType.STRING)
+    private StorageType storageType;
+    @Column(name = "usage_purpose", nullable = false)
+    @Comment("보관 목적")
+    @Enumerated(EnumType.STRING)
+    private UsagePurpose usagePurpose;
 
     public Location(
         final String locationBarcode,
@@ -30,11 +59,4 @@ public class Location {
         Assert.notNull(usagePurpose, "보관 목적은 필수입니다.");
     }
 
-    public void assignId(final Long locationNo) {
-        this.locationNo = locationNo;
-    }
-
-    public Long getLocationNo() {
-        return locationNo;
-    }
 }
