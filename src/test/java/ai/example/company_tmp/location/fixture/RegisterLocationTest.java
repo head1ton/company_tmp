@@ -18,7 +18,9 @@ class RegisterLocationTest extends ApiTest {
     @DisplayName("로케이션을 등록한다.")
     void registerLocation() {
         Scenario
-            .registerLocation().request();
+            .registerLocation()
+//            .locationBarcode(null)
+            .request();
 
 //        registerLocation.request(request);
 
