@@ -27,10 +27,11 @@ class LocationTest {
     void already_exists_assignLPN() {
         final Location location = LocationFixture.anLocationFixture().build();
 
-        final LPN lpn = LPNFixture.anLPN().build();
+        final LPN lpn = LPNFixture.anLPN().lpnBarcode("LPNBARCODE").build();
+        final LPN lpn2 = LPNFixture.anLPN().lpnBarcode("LPNBARCODE").build();
 
         location.assignLPN(lpn);
-        location.assignLPN(lpn);
+        location.assignLPN(lpn2);
 
         assertThat(location.getLocationLPNList()).hasSize(1);
         assertThat(location.getLocationLPNList().get(0).getInventoryQuantity()).isEqualTo(2L);
