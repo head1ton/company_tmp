@@ -4,18 +4,16 @@ import ai.example.company_tmp.inbound.domain.LPN;
 import ai.example.company_tmp.inbound.domain.LPNRepository;
 import ai.example.company_tmp.location.domain.Location;
 import ai.example.company_tmp.location.domain.LocationRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+@Component
+@RequiredArgsConstructor
 public class AssignLocationLPN {
 
     private final LocationRepository locationRepository;
     private final LPNRepository lpnRepository;
-
-    public AssignLocationLPN(final LocationRepository locationRepository,
-        final LPNRepository lpnRepository) {
-        this.locationRepository = locationRepository;
-        this.lpnRepository = lpnRepository;
-    }
 
     public void request(final Request request) {
         final Location location = locationRepository.getByLocationBarcode(

@@ -1,6 +1,7 @@
 package ai.example.company_tmp.location.domain;
 
 import ai.example.company_tmp.inbound.domain.LPN;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -8,6 +9,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +43,7 @@ public class Location {
     @Comment("보관 목적")
     @Enumerated(EnumType.STRING)
     private UsagePurpose usagePurpose;
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<LocationLPN> locationLPNList = new ArrayList<>();
 
     public Location(
