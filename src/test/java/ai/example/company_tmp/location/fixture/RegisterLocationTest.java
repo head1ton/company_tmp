@@ -50,10 +50,14 @@ class RegisterLocationTest {
         }
     }
 
+    public static class Location {
+
+    }
+
     public class RegisterLocation {
 
         public void request(final Request request) {
-            throw new UnsupportedOperationException("Unsupported request");
+            final Location location = request.toDomain();
         }
 
         public record Request(
@@ -61,6 +65,9 @@ class RegisterLocationTest {
             StorageType storageType,
             UsagePurpose usagePurpose) {
 
+            public Location toDomain() {
+                throw new UnsupportedOperationException("Unsupported toDomain");
+            }
         }
     }
 }
