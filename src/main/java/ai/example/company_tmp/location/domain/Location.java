@@ -9,6 +9,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,6 +40,7 @@ public class Location {
     @Comment("보관 목적")
     @Enumerated(EnumType.STRING)
     private UsagePurpose usagePurpose;
+    private final List<LocationLPN> locationLPNList = new ArrayList<>();
 
     public Location(
         final String locationBarcode,
@@ -61,6 +64,11 @@ public class Location {
     }
 
     public void assignLPN(final LPN lpn) {
-        throw new UnsupportedOperationException("Unsupported assignLPN");
+        Assert.notNull(lpn, "LPN은 필수입니다.");
+
+        // 1. 로케이션 LPN 목록에 등록하려는 LPN이 없으면 새로 등록. 새로 등록한 LPN은 재고를 1 이다.
+        // 2. 로케이션 LPN 목록에 등록하려는 LPN이 존재하면 재고를 1 증가시킨다.
+//        locationLPNList
+//        lpn.assignLocation(this);
     }
 }
