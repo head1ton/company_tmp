@@ -7,7 +7,6 @@ import ai.example.company_tmp.common.Scenario;
 import ai.example.company_tmp.location.domain.Location;
 import ai.example.company_tmp.location.domain.LocationLPN;
 import ai.example.company_tmp.location.domain.LocationRepository;
-import ai.example.company_tmp.location.feature.api.AssignLocationLPNApi;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,11 +37,11 @@ class AssignLocationLPNTest extends ApiTest {
     @Transactional
     void assignLocationLPN() {
 
-        final String locationBarcode = AssignLocationLPNApi.assignLocationLPN();
+        Scenario.assignLocationLPN().build();
 
 //        assignLocationLPN.request(request);
 
-        final Location location = locationRepository.getByLocationBarcode(locationBarcode);
+        final Location location = locationRepository.getByLocationBarcode("A-1-1");
         final List<LocationLPN> locationLPNList = location.getLocationLPNList();
         final LocationLPN locationLPN = locationLPNList.get(0);
         assertThat(locationLPNList).hasSize(1);
