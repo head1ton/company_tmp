@@ -52,6 +52,18 @@ class RegisterLocationTest {
 
     public static class Location {
 
+        private final String locationBarcode;
+        private final StorageType storageType;
+        private final UsagePurpose usagePurpose;
+
+        public Location(
+            final String locationBarcode,
+            final StorageType storageType,
+            final UsagePurpose usagePurpose) {
+            this.locationBarcode = locationBarcode;
+            this.storageType = storageType;
+            this.usagePurpose = usagePurpose;
+        }
     }
 
     public class RegisterLocation {
@@ -66,7 +78,7 @@ class RegisterLocationTest {
             UsagePurpose usagePurpose) {
 
             public Location toDomain() {
-                throw new UnsupportedOperationException("Unsupported toDomain");
+                return new Location(locationBarcode, storageType, usagePurpose);
             }
         }
     }
