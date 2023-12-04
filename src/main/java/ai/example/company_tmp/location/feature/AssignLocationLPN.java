@@ -5,9 +5,9 @@ import ai.example.company_tmp.inbound.domain.LPNRepository;
 import ai.example.company_tmp.location.domain.Location;
 import ai.example.company_tmp.location.domain.LocationRepository;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,11 +30,10 @@ public class AssignLocationLPN {
         location.assignLPN(lpn);
     }
 
-    public record Request(String locationBarcode, String lpnBarcode) {
-
-        public Request {
-            Assert.hasText(locationBarcode, "로케이션 바코드는 필수입니다.");
-            Assert.hasText(lpnBarcode, "LPN 바코드는 필수입니다.");
-        }
+    public record Request(
+        @NotBlank(message = "로케이션 바코드는 필수입니다.")
+        String locationBarcode,
+        @NotBlank(message = "LPN 바코드는 필수입니다.")
+        String lpnBarcode) {
     }
 }
