@@ -1,5 +1,7 @@
 package ai.example.company_tmp.location.feature;
 
+import ai.example.company_tmp.inbound.domain.LPN;
+import ai.example.company_tmp.inbound.domain.LPNRepository;
 import ai.example.company_tmp.location.domain.Location;
 import ai.example.company_tmp.location.domain.LocationRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,10 +36,17 @@ class AssignLocationLPNTest {
     public class AssignLocationLPN {
 
         private LocationRepository locationRepository;
+        private LPNRepository lpnRepository;
 
         public void request(final Request request) {
             final Location location = locationRepository.getByLocationBarcode(
                 request.locationBarcode);
+
+            final LPN lpn = getByLPNBarcode(request);
+        }
+
+        private LPN getByLPNBarcode(final Request request) {
+            return lpnRepository.findByLPNBarcode(request.lpnBarcode).orElseThrow();
         }
 
         public record Request(String locationBarcode, String lpnBarcode) {
