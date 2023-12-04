@@ -6,6 +6,7 @@ import ai.example.company_tmp.location.domain.Location;
 import ai.example.company_tmp.location.domain.LocationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 @Component
@@ -15,6 +16,7 @@ public class AssignLocationLPN {
     private final LocationRepository locationRepository;
     private final LPNRepository lpnRepository;
 
+    @Transactional
     public void request(final Request request) {
         final Location location = locationRepository.getByLocationBarcode(
             request.locationBarcode);
