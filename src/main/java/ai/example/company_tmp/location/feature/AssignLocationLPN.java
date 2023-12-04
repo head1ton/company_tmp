@@ -4,12 +4,15 @@ import ai.example.company_tmp.inbound.domain.LPN;
 import ai.example.company_tmp.inbound.domain.LPNRepository;
 import ai.example.company_tmp.location.domain.Location;
 import ai.example.company_tmp.location.domain.LocationRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Component
+@RestController
 @RequiredArgsConstructor
 public class AssignLocationLPN {
 
@@ -17,7 +20,8 @@ public class AssignLocationLPN {
     private final LPNRepository lpnRepository;
 
     @Transactional
-    public void request(final Request request) {
+    @PostMapping("/locations/assign-lpn")
+    public void request(@RequestBody @Valid final Request request) {
         final Location location = locationRepository.getByLocationBarcode(
             request.locationBarcode);
 

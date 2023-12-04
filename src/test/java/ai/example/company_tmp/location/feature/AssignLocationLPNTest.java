@@ -7,11 +7,14 @@ import ai.example.company_tmp.common.Scenario;
 import ai.example.company_tmp.location.domain.Location;
 import ai.example.company_tmp.location.domain.LocationLPN;
 import ai.example.company_tmp.location.domain.LocationRepository;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 
 class AssignLocationLPNTest extends ApiTest {
@@ -44,7 +47,16 @@ class AssignLocationLPNTest extends ApiTest {
             lpnBarcode
         );
 
-        assignLocationLPN.request(request);
+        RestAssured
+            .given().log().all()
+            .contentType(ContentType.JSON)
+            .body(request)
+            .when()
+            .post("/locations/assign-lpn")
+            .then().log().all()
+            .statusCode(HttpStatus.OK.value());
+
+//        assignLocationLPN.request(request);
 
         final Location location = locationRepository.getByLocationBarcode(locationBarcode);
         final List<LocationLPN> locationLPNList = location.getLocationLPNList();
