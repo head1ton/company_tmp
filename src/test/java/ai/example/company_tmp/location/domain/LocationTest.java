@@ -1,5 +1,7 @@
 package ai.example.company_tmp.location.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import ai.example.company_tmp.inbound.domain.LPN;
 import ai.example.company_tmp.inbound.domain.LPNFixture;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +18,7 @@ class LocationTest {
 
         location.assignLPN(lpn);
 
+        assertThat(location.getLocationLPNList()).hasSize(1);
 
     }
 

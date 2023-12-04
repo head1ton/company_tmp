@@ -20,12 +20,12 @@ import org.springframework.util.Assert;
 @Entity
 @Table(name = "location")
 @Comment("로케이션")
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Location {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter
     @Column(name = "location_id")
     @Comment("로케이션 번호")
     private Long locationNo;
@@ -68,7 +68,10 @@ public class Location {
 
         // 1. 로케이션 LPN 목록에 등록하려는 LPN이 없으면 새로 등록. 새로 등록한 LPN은 재고를 1 이다.
         // 2. 로케이션 LPN 목록에 등록하려는 LPN이 존재하면 재고를 1 증가시킨다.
-//        locationLPNList
-//        lpn.assignLocation(this);
+        locationLPNList.stream()
+                       .filter(locationLPN -> locationLPN.getLPN().equals(lpn))
+                       .findFirst()
+                       .ifPresentOrElse(LocationLPN::increaseQuantity,
+                           () -> locationLPNList.add(new LocationLPN(this, lpn)));
     }
 }
