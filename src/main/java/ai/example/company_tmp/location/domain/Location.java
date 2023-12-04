@@ -69,9 +69,13 @@ public class Location {
         // 1. 로케이션 LPN 목록에 등록하려는 LPN이 없으면 새로 등록. 새로 등록한 LPN은 재고를 1 이다.
         // 2. 로케이션 LPN 목록에 등록하려는 LPN이 존재하면 재고를 1 증가시킨다.
         locationLPNList.stream()
-                       .filter(locationLPN -> locationLPN.getLPN().equals(lpn))
+                       .filter(locationLPN -> matchLpnToLocation(lpn, locationLPN))
                        .findFirst()
                        .ifPresentOrElse(LocationLPN::increaseQuantity,
                            () -> locationLPNList.add(new LocationLPN(this, lpn)));
+    }
+
+    private boolean matchLpnToLocation(final LPN lpn, final LocationLPN locationLPN) {
+        return locationLPN.getLPN().equals(lpn);
     }
 }
