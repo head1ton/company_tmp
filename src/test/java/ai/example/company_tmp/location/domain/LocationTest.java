@@ -1,8 +1,7 @@
 package ai.example.company_tmp.location.domain;
 
-import ai.example.company_tmp.inbound.domain.InboundItemFixture;
 import ai.example.company_tmp.inbound.domain.LPN;
-import java.time.LocalDateTime;
+import ai.example.company_tmp.inbound.domain.LPNFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,18 +12,11 @@ class LocationTest {
     void assignLPN() {
         final Location location = createLocation();
 
-        final LPN lpn = createLPN();
+        final LPN lpn = LPNFixture.anLPN().build();
 
         location.assignLPN(lpn);
 
 
-    }
-
-    private LPN createLPN() {
-        final String lpnBarcode = "LPN-1";
-        final LocalDateTime expirationAt = LocalDateTime.now().plusDays(1);
-        return new LPN(lpnBarcode, expirationAt,
-            InboundItemFixture.anInboundItem().build());
     }
 
     private Location createLocation() {
