@@ -1,5 +1,6 @@
 package ai.example.company_tmp.location.domain;
 
+import ai.example.company_tmp.inbound.domain.LPN;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -59,4 +60,7 @@ public class Location {
         Assert.notNull(usagePurpose, "보관 목적은 필수입니다.");
     }
 
+    public void assignLPN(final LPN lpn) {
+        throw new UnsupportedOperationException("Unsupported assignLPN");
+    }
 }
