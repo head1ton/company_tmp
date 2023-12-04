@@ -1,4 +1,4 @@
-package ai.example.company_tmp.location.fixture;
+package ai.example.company_tmp.location.feature;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
