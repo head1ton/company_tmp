@@ -10,7 +10,7 @@ class LocationTest {
     @Test
     @DisplayName("로케이션에 LPN을 할당한다.")
     void assignLPN() {
-        final Location location = createLocation();
+        final Location location = LocationFixture.anLocationFixture().build();
 
         final LPN lpn = LPNFixture.anLPN().build();
 
@@ -19,10 +19,4 @@ class LocationTest {
 
     }
 
-    private Location createLocation() {
-        final String locationBarcode = "A-1-1";
-        final StorageType storageType = StorageType.TOTE;
-        final UsagePurpose usagePurpose = UsagePurpose.MOVE;
-        return new Location(locationBarcode, storageType, usagePurpose);
-    }
 }
