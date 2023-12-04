@@ -16,17 +16,50 @@ class RegisterLocationTest {
     @Test
     @DisplayName("로케이션을 등록한다.")
     void registerLocation() {
-        final RegisterLocation.Request request = new RegisterLocation.Request();
+        final String locationBarcode = "A-1-1";
+
+        final StorageType storageType = StorageType.TOTE;
+        final UsagePurpose usagePurpose = UsagePurpose.MOVE;
+        final RegisterLocation.Request request = new RegisterLocation.Request(
+            locationBarcode,
+            storageType,
+            usagePurpose
+        );
         registerLocation.request(request);
+    }
+
+    public enum StorageType {
+        TOTE("토트바구니"),
+        ;
+
+        private final String description;
+
+        StorageType(final String description) {
+            this.description = description;
+        }
+    }
+
+    public enum UsagePurpose {
+        MOVE("이동 목적"),
+        ;
+
+        private final String description;
+
+        UsagePurpose(final String description) {
+            this.description = description;
+        }
     }
 
     public class RegisterLocation {
 
-        public void request() {
+        public void request(final Request request) {
             throw new UnsupportedOperationException("Unsupported request");
         }
 
-        public record Request() {
+        public record Request(
+            String locationBarcode,
+            StorageType storageType,
+            UsagePurpose usagePurpose) {
 
         }
     }
