@@ -5,7 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.Assert;
 
-class RegisterPackingMaterialTest {
+class RegisterPackagingMaterialTest {
 
     private RegisterPackingMaterial registerPackingMaterial;
 
@@ -58,7 +58,7 @@ class RegisterPackingMaterialTest {
         }
     }
 
-    public static class PackingMaterialDimension {
+    public static class PackagingMaterialDimension {
 
         private final long innerWidthInMillimeters;
         private final long innerHeightInMillimeters;
@@ -67,7 +67,7 @@ class RegisterPackingMaterialTest {
         private final long outerHeightInMillimeters;
         private final long outerLengthInMillimeters;
 
-        public PackingMaterialDimension(final long innerWidthInMillimeters,
+        public PackagingMaterialDimension(final long innerWidthInMillimeters,
             final long innerHeightInMillimeters, final long innerLengthInMillimeters,
             final long outerWidthInMillimeters, final long outerHeightInMillimeters,
             final long outerLengthInMillimeters) {
@@ -114,38 +114,38 @@ class RegisterPackingMaterialTest {
         }
     }
 
-    public static class PackingMaterial {
+    public static class PackagingMaterial {
 
         private final String name;
         private final String code;
-        private final PackingMaterialDimension packingMaterialDimension;
+        private final PackagingMaterialDimension packagingMaterialDimension;
         private final long weightInGrams;
         private final long maxWeightInGrams;
         private final MaterialType materialType;
 
-        public PackingMaterial(
+        public PackagingMaterial(
             final String name,
             final String code,
-            final PackingMaterialDimension packingMaterialDimension,
+            final PackagingMaterialDimension packagingMaterialDimension,
             final long weightInGrams,
             final long maxWeightInGrams,
             final MaterialType materialType) {
-            validateConstructor(name, code, packingMaterialDimension, weightInGrams,
+            validateConstructor(name, code, packagingMaterialDimension, weightInGrams,
                 maxWeightInGrams, materialType);
             this.name = name;
             this.code = code;
-            this.packingMaterialDimension = packingMaterialDimension;
+            this.packagingMaterialDimension = packagingMaterialDimension;
             this.weightInGrams = weightInGrams;
             this.maxWeightInGrams = maxWeightInGrams;
             this.materialType = materialType;
         }
 
         private static void validateConstructor(final String name, final String code,
-            final PackingMaterialDimension packingMaterialDimension, final long weightInGrams,
+            final PackagingMaterialDimension packagingMaterialDimension, final long weightInGrams,
             final long maxWeightInGrams, final MaterialType materialType) {
             Assert.hasText(name, "포장재 이름은 필수입니다.");
             Assert.hasText(code, "포장재 코드는 필수입니다.");
-            Assert.notNull(packingMaterialDimension, "포장재 치수는 필수입니다.");
+            Assert.notNull(packagingMaterialDimension, "포장재 치수는 필수입니다.");
             Assert.notNull(weightInGrams, "무게는 필수입니다.");
             Assert.notNull(maxWeightInGrams, "최대 무게는 필수입니다.");
             Assert.notNull(materialType, "포장재 종류는 필수입니다.");
@@ -154,8 +154,12 @@ class RegisterPackingMaterialTest {
 
     public class RegisterPackingMaterial {
 
+        private PackagingMaterialRepository packagingMaterialRepository;
+
         public void request(final Request request) {
-            final PackingMaterial packingMaterial = request.toDomain();
+            final PackagingMaterial packagingMaterial = request.toDomain();
+
+            packagingMaterialRepository.save(packagingMaterial);
         }
 
         public record Request(
@@ -209,11 +213,11 @@ class RegisterPackingMaterialTest {
                 Assert.notNull(materialType, "포장재 종류는 필수입니다.");
             }
 
-            public PackingMaterial toDomain() {
-                return new PackingMaterial(
+            public PackagingMaterial toDomain() {
+                return new PackagingMaterial(
                     name,
                     code,
-                    new PackingMaterialDimension(
+                    new PackagingMaterialDimension(
                         innerWidthInMillimeters,
                         innerHeightInMillimeters,
                         innerLengthInMillimeters,
@@ -226,6 +230,13 @@ class RegisterPackingMaterialTest {
                     materialType
                 );
             }
+        }
+    }
+
+    private class PackagingMaterialRepository {
+
+        public void save(final PackagingMaterial packagingMaterial) {
+            throw new UnsupportedOperationException("Unsupported save");
         }
     }
 }
