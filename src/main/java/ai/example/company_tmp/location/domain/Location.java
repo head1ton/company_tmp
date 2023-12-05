@@ -44,7 +44,7 @@ public class Location {
     @Enumerated(EnumType.STRING)
     private UsagePurpose usagePurpose;
     @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<LocationLPN> locationLPNList = new ArrayList<>();
+    private final List<Inventory> inventories = new ArrayList<>();
 
     public Location(
         final String locationBarcode,
@@ -67,22 +67,22 @@ public class Location {
         Assert.notNull(usagePurpose, "보관 목적은 필수입니다.");
     }
 
-    public void assignLPN(final LPN lpn) {
+    public void assignInventory(final LPN lpn) {
         Assert.notNull(lpn, "LPN은 필수입니다.");
 
-        findLocationLPNBy(lpn)
-                       .ifPresentOrElse(LocationLPN::increaseQuantity,
+        findInventoryByLpn(lpn)
+            .ifPresentOrElse(Inventory::increaseQuantity,
                            () -> assignNewLPN(lpn));
     }
 
-    private Optional<LocationLPN> findLocationLPNBy(final LPN lpn) {
-        return locationLPNList.stream()
-                              .filter(locationLPN -> locationLPN.matchLpnToLocation(lpn))
-                              .findFirst();
+    private Optional<Inventory> findInventoryByLpn(final LPN lpn) {
+        return inventories.stream()
+                          .filter(inventory -> inventory.matchLpnToLocation(lpn))
+                          .findFirst();
     }
 
     private void assignNewLPN(final LPN lpn) {
-        locationLPNList.add(new LocationLPN(this, lpn));
+        inventories.add(new Inventory(this, lpn));
     }
 
 }

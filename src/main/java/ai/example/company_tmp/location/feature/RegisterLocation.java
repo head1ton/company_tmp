@@ -1,4 +1,4 @@
-package ai.example.company_tmp.location.fixture;
+package ai.example.company_tmp.location.feature;
 
 import ai.example.company_tmp.location.domain.Location;
 import ai.example.company_tmp.location.domain.LocationRepository;

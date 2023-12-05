@@ -3,7 +3,7 @@ package ai.example.company_tmp.location.feature.api;
 import ai.example.company_tmp.common.Scenario;
 import ai.example.company_tmp.location.domain.StorageType;
 import ai.example.company_tmp.location.domain.UsagePurpose;
-import ai.example.company_tmp.location.fixture.RegisterLocation;
+import ai.example.company_tmp.location.feature.RegisterLocation;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.springframework.http.HttpStatus;
