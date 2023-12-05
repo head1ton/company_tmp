@@ -16,10 +16,18 @@ class RegisterPackingMaterialTest {
     @Test
     @DisplayName("포장재를 등록한다.")
     void registerPackingMaterial() {
-
+        final RegisterPackingMaterial.Request request = new RegisterPackingMaterial.Request();
+        registerPackingMaterial.request(request);
     }
 
     private class RegisterPackingMaterial {
 
+        public void request(final Request request) {
+            throw new UnsupportedOperationException("Unsupported request");
+        }
+
+        public record Request() {
+
+        }
     }
 }
