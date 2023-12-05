@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import ai.example.company_tmp.common.ApiTest;
 import ai.example.company_tmp.common.Scenario;
+import ai.example.company_tmp.location.domain.Inventory;
 import ai.example.company_tmp.location.domain.Location;
-import ai.example.company_tmp.location.domain.LocationLPN;
 import ai.example.company_tmp.location.domain.LocationRepository;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,15 +14,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-class AssignLocationLPNTest extends ApiTest {
+class AssignInventoryTest extends ApiTest {
 
     @Autowired
-    private AssignLocationLPN assignLocationLPN;
+    private AssignInventory assignInventory;
     @Autowired
     private LocationRepository locationRepository;
 
     @BeforeEach
-    void setUpAssignLocationLPN() {
+    void setUpAssignInventory() {
         Scenario
             .registerProduct().request()
             .registerInbound().request()
@@ -35,19 +35,19 @@ class AssignLocationLPNTest extends ApiTest {
     @Test
     @DisplayName("로케이션에 LPN을 할당한다.")
     @Transactional
-    void assignLocationLPN() {
+    void assignInventory() {
 
-        Scenario.assignLocationLPN().build();
+        Scenario.assignInventory().build();
 
-        assertAssignLocationLPN();
+        assertAssignInventory();
     }
 
-    private void assertAssignLocationLPN() {
+    private void assertAssignInventory() {
         final Location location = locationRepository.getByLocationBarcode("A-1-1");
-        final List<LocationLPN> locationLPNList = location.getLocationLPNList();
-        final LocationLPN locationLPN = locationLPNList.get(0);
-        assertThat(locationLPNList).hasSize(1);
-        assertThat(locationLPN.getInventoryQuantity()).isEqualTo(1L);
+        final List<Inventory> inventories = location.getInventories();
+        final Inventory inventory = inventories.get(0);
+        assertThat(inventories).hasSize(1);
+        assertThat(inventory.getInventoryQuantity()).isEqualTo(1L);
     }
 
 }

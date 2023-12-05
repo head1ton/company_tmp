@@ -4,7 +4,7 @@ import ai.example.company_tmp.inbound.feature.api.ConfirmInboundApi;
 import ai.example.company_tmp.inbound.feature.api.RegisterInboundApi;
 import ai.example.company_tmp.inbound.feature.api.RegisterLPNApi;
 import ai.example.company_tmp.inbound.feature.api.RejectInboundApi;
-import ai.example.company_tmp.location.feature.api.AssignLocationLPNApi;
+import ai.example.company_tmp.location.feature.api.AssignInventoryApi;
 import ai.example.company_tmp.location.feature.api.RegisterLocationApi;
 import ai.example.company_tmp.product.feature.api.RegisterProductApi;
 
@@ -34,7 +34,7 @@ public class Scenario {
         return new RegisterLPNApi();
     }
 
-    public static AssignLocationLPNApi assignLocationLPN() {
-        return new AssignLocationLPNApi();
+    public static AssignInventoryApi assignInventory() {
+        return new AssignInventoryApi();
     }
 }
