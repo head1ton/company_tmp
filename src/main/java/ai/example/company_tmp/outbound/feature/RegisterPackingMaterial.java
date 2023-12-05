@@ -4,18 +4,24 @@ import ai.example.company_tmp.outbound.domain.MaterialType;
 import ai.example.company_tmp.outbound.domain.PackagingMaterial;
 import ai.example.company_tmp.outbound.domain.PackagingMaterialDimension;
 import ai.example.company_tmp.outbound.domain.PackagingMaterialRepository;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
+@RequiredArgsConstructor
 public class RegisterPackingMaterial {
 
     private final PackagingMaterialRepository packagingMaterialRepository;
 
-    public RegisterPackingMaterial(
-        final PackagingMaterialRepository packagingMaterialRepository) {
-        this.packagingMaterialRepository = packagingMaterialRepository;
-    }
-
-    public void request(final Request request) {
+    @PostMapping("/packaging-materials")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void request(@RequestBody @Valid final Request request) {
         final PackagingMaterial packagingMaterial = request.toDomain();
 
         packagingMaterialRepository.save(packagingMaterial);

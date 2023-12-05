@@ -2,22 +2,20 @@ package ai.example.company_tmp.outbound.feature;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import ai.example.company_tmp.common.ApiTest;
 import ai.example.company_tmp.outbound.domain.MaterialType;
 import ai.example.company_tmp.outbound.domain.PackagingMaterialRepository;
-import org.junit.jupiter.api.BeforeEach;
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 
-class RegisterPackagingMaterialTest {
+class RegisterPackagingMaterialTest extends ApiTest {
 
-    private RegisterPackingMaterial registerPackingMaterial;
+    @Autowired
     private PackagingMaterialRepository packagingMaterialRepository;
-
-    @BeforeEach
-    void setUp() {
-        packagingMaterialRepository = new PackagingMaterialRepository();
-        registerPackingMaterial = new RegisterPackingMaterial(packagingMaterialRepository);
-    }
 
     @Test
     @DisplayName("포장재를 등록한다.")
@@ -47,7 +45,15 @@ class RegisterPackagingMaterialTest {
             materialType
         );
 
-        registerPackingMaterial.request(request);
+        RestAssured.given().log().all()
+                   .contentType(ContentType.JSON)
+                   .body(request)
+                   .when()
+                   .post("/packaging-materials")
+                   .then().log().all()
+                   .statusCode(HttpStatus.CREATED.value());
+
+//        registerPackingMaterial.request(request);
 
         assertThat(packagingMaterialRepository.findAll()).hasSize(1);
     }
