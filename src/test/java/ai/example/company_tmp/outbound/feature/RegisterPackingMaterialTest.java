@@ -58,6 +58,100 @@ class RegisterPackingMaterialTest {
         }
     }
 
+    public static class PackingMaterialDimension {
+
+        private final long innerWidthInMillimeters;
+        private final long innerHeightInMillimeters;
+        private final long innerLengthInMillimeters;
+        private final long outerWidthInMillimeters;
+        private final long outerHeightInMillimeters;
+        private final long outerLengthInMillimeters;
+
+        public PackingMaterialDimension(final long innerWidthInMillimeters,
+            final long innerHeightInMillimeters, final long innerLengthInMillimeters,
+            final long outerWidthInMillimeters, final long outerHeightInMillimeters,
+            final long outerLengthInMillimeters) {
+            validateConstructor(innerWidthInMillimeters, innerHeightInMillimeters,
+                innerLengthInMillimeters,
+                outerWidthInMillimeters, outerHeightInMillimeters,
+                outerLengthInMillimeters);
+            this.innerWidthInMillimeters = innerWidthInMillimeters;
+            this.innerHeightInMillimeters = innerHeightInMillimeters;
+            this.innerLengthInMillimeters = innerLengthInMillimeters;
+            this.outerWidthInMillimeters = outerWidthInMillimeters;
+            this.outerHeightInMillimeters = outerHeightInMillimeters;
+            this.outerLengthInMillimeters = outerLengthInMillimeters;
+        }
+
+        private void validateConstructor(final long innerWidthInMillimeters,
+            final long innerHeightInMillimeters, final long innerLengthInMillimeters,
+            final long outerWidthInMillimeters, final long outerHeightInMillimeters,
+            final long outerLengthInMillimeters) {
+            Assert.notNull(innerWidthInMillimeters, "내부 폭은 필수입니다.");
+            if (innerWidthInMillimeters < 1) {
+                throw new IllegalArgumentException("내부 폭은 1mm 이상이어야 합니다.");
+            }
+            Assert.notNull(innerHeightInMillimeters, "내부 높이는 필수입니다.");
+            if (innerHeightInMillimeters < 1) {
+                throw new IllegalArgumentException("내부 높이는 1mm 이상이어야 합니다.");
+            }
+            Assert.notNull(innerLengthInMillimeters, "내부 길이는 필수입니다.");
+            if (innerLengthInMillimeters < 1) {
+                throw new IllegalArgumentException("내부 길이는 1mm 이상이어야 합니다.");
+            }
+            Assert.notNull(outerWidthInMillimeters, "외부 폭은 필수입니다.");
+            if (outerWidthInMillimeters < 1) {
+                throw new IllegalArgumentException("외부 폭은 1mm 이상이어야 합니다.");
+            }
+            Assert.notNull(outerHeightInMillimeters, "외부 높이는 필수입니다.");
+            if (outerHeightInMillimeters < 1) {
+                throw new IllegalArgumentException("외부 높이는 1mm 이상이어야 합니다.");
+            }
+            Assert.notNull(outerLengthInMillimeters, "외부 길이는 필수입니다.");
+            if (outerLengthInMillimeters < 1) {
+                throw new IllegalArgumentException("외부 길이는 1mm 이상이어야 합니다.");
+            }
+        }
+    }
+
+    public static class PackingMaterial {
+
+        private final String name;
+        private final String code;
+        private final PackingMaterialDimension packingMaterialDimension;
+        private final long weightInGrams;
+        private final long maxWeightInGrams;
+        private final MaterialType materialType;
+
+        public PackingMaterial(
+            final String name,
+            final String code,
+            final PackingMaterialDimension packingMaterialDimension,
+            final long weightInGrams,
+            final long maxWeightInGrams,
+            final MaterialType materialType) {
+            validateConstructor(name, code, packingMaterialDimension, weightInGrams,
+                maxWeightInGrams, materialType);
+            this.name = name;
+            this.code = code;
+            this.packingMaterialDimension = packingMaterialDimension;
+            this.weightInGrams = weightInGrams;
+            this.maxWeightInGrams = maxWeightInGrams;
+            this.materialType = materialType;
+        }
+
+        private static void validateConstructor(final String name, final String code,
+            final PackingMaterialDimension packingMaterialDimension, final long weightInGrams,
+            final long maxWeightInGrams, final MaterialType materialType) {
+            Assert.hasText(name, "포장재 이름은 필수입니다.");
+            Assert.hasText(code, "포장재 코드는 필수입니다.");
+            Assert.notNull(packingMaterialDimension, "포장재 치수는 필수입니다.");
+            Assert.notNull(weightInGrams, "무게는 필수입니다.");
+            Assert.notNull(maxWeightInGrams, "최대 무게는 필수입니다.");
+            Assert.notNull(materialType, "포장재 종류는 필수입니다.");
+        }
+    }
+
     public class RegisterPackingMaterial {
 
         public void request(final Request request) {
@@ -116,12 +210,22 @@ class RegisterPackingMaterialTest {
             }
 
             public PackingMaterial toDomain() {
-                throw new UnsupportedOperationException("Unsupported toDomain");
+                return new PackingMaterial(
+                    name,
+                    code,
+                    new PackingMaterialDimension(
+                        innerWidthInMillimeters,
+                        innerHeightInMillimeters,
+                        innerLengthInMillimeters,
+                        outerWidthInMillimeters,
+                        outerHeightInMillimeters,
+                        outerLengthInMillimeters
+                    ),
+                    weightInGrams,
+                    maxWeightInGrams,
+                    materialType
+                );
             }
         }
-    }
-
-    public class PackingMaterial {
-
     }
 }
