@@ -43,6 +43,8 @@ class RegisterPackingMaterialTest {
         );
 
         registerPackingMaterial.request(request);
+
+//        assertThat(registerPackingMaterialRepository.findAll()).hasSize(1);
     }
 
     public enum MaterialType {
@@ -59,7 +61,7 @@ class RegisterPackingMaterialTest {
     public class RegisterPackingMaterial {
 
         public void request(final Request request) {
-            throw new UnsupportedOperationException("Unsupported request");
+            final PackingMaterial packingMaterial = request.toDomain();
         }
 
         public record Request(
@@ -112,6 +114,14 @@ class RegisterPackingMaterialTest {
                 }
                 Assert.notNull(materialType, "포장재 종류는 필수입니다.");
             }
+
+            public PackingMaterial toDomain() {
+                throw new UnsupportedOperationException("Unsupported toDomain");
+            }
         }
+    }
+
+    public class PackingMaterial {
+
     }
 }
