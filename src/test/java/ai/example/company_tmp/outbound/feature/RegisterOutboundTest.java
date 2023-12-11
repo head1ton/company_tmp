@@ -45,7 +45,6 @@ class RegisterOutboundTest {
 
         registerOutbound.request(request);
 
-        // TODO 출고가 등록되었는지 확인.
         assertThat(outboundRepository.findAll()).hasSize(1);
     }
 
