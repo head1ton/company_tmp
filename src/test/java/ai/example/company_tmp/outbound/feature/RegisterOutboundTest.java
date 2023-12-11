@@ -1,7 +1,6 @@
 package ai.example.company_tmp.outbound.feature;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,29 +58,83 @@ class RegisterOutboundTest {
 
     public class OrderRepository {
 
-        public void getBy(final Long orderNo) {
-            final OrderCustomer orderCustomer = new OrderCustomer();
-            final String deliveryRequirements = "배송 요구사항";
-            final OrderProduct orderProduct = null;
-            final List<OrderProduct> orderProducts = Collections.singletonList(orderProduct);
-            new Order(
+        public Order getBy(final Long orderNo) {
+            return new Order(
                 orderNo,
-                orderCustomer,
-                deliveryRequirements,
-                orderProduct,
+                new OrderCustomer(
+                    "name",
+                    "email",
+                    "phone",
+                    "zipNo",
+                    "address"
+                ),
+                "배송 요구사항",
+                Collections.singletonList(new OrderProduct(
+                    1L,
+                    1500L,
+                    1L
+                ))
                 );
         }
     }
 
     public class Order {
 
+        private final Long orderNo;
+        private final OrderCustomer orderCustomer;
+        private final String deliveryRequirements;
+        private final List<OrderProduct> orderProducts;
+
+        public Order(
+            final Long orderNo,
+            final OrderCustomer orderCustomer,
+            final String deliveryRequirements,
+            final List<OrderProduct> orderProducts) {
+
+            this.orderNo = orderNo;
+            this.orderCustomer = orderCustomer;
+            this.deliveryRequirements = deliveryRequirements;
+            this.orderProducts = orderProducts;
+        }
     }
 
     public class OrderCustomer {
 
+        private final String name;
+        private final String email;
+        private final String phone;
+        private final String zipNo;
+        private final String address;
+
+        public OrderCustomer(
+            final String name,
+            final String email,
+            final String phone,
+            final String zipNo,
+            final String address) {
+
+            this.name = name;
+            this.email = email;
+            this.phone = phone;
+            this.zipNo = zipNo;
+            this.address = address;
+        }
     }
 
     public class OrderProduct {
 
+        private final Long productNo;
+        private final Long orderQuantity;
+        private final Long unitPrice;
+
+        public OrderProduct(
+            final Long productNo,
+            final Long orderQuantity,
+            final Long unitPrice) {
+
+            this.productNo = productNo;
+            this.orderQuantity = orderQuantity;
+            this.unitPrice = unitPrice;
+        }
     }
 }
