@@ -60,7 +60,9 @@ public class RegisterOutbound {
         final Order order = orderRepository.getBy(request.orderNo);
 
         // 주문 정보에 맞는 상품의 재고가 충분한지 확인하고 충분하지 않으면 예외를 던진다.
-        validateInventory(order.orderProducts());
+        final List<Inventories> inventoriesList = inventoriesList(order.orderProducts());
+        // 해당 상품의 재고를 전부 가져온다.
+        inventoriesList.forEach(Inventories::validateInventory);
 
         // 출고에 사용할 포장재를 선택해준다.
 
@@ -72,13 +74,13 @@ public class RegisterOutbound {
         outboundRepository.save(outbound);
     }
 
-    private void validateInventory(final List<OrderProduct> orderProducts) {
-        for (final OrderProduct orderProduct : orderProducts) {
-            // 해당 상품의 재고를 전부 가져온다.
-            final Inventories inventories = new Inventories(inventoryRepository.findByProductNo(
-                orderProduct.getProductNo()), orderProduct.orderQuantity());
-            inventories.validateInventory();
-        }
+    private List<Inventories> inventoriesList(final List<OrderProduct> orderProducts) {
+        return orderProducts.stream()
+                            .map(orderProduct -> new Inventories(
+                                inventoryRepository.findByProductNo(
+                                    orderProduct.getProductNo()),
+                                orderProduct.orderQuantity()))
+                            .toList();
     }
 
     public record Request(
