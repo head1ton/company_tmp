@@ -1,6 +1,7 @@
 package ai.example.company_tmp.outbound.feature;
 
 import ai.example.company_tmp.outbound.domain.Order;
+import ai.example.company_tmp.outbound.domain.OrderProduct;
 import ai.example.company_tmp.outbound.domain.OrderRepository;
 import ai.example.company_tmp.outbound.domain.Outbound;
 import ai.example.company_tmp.outbound.domain.OutboundProduct;
@@ -23,6 +24,32 @@ public class RegisterOutbound {
     private final OrderRepository orderRepository;
     private final OutboundRepository outboundRepository;
 
+    private static Outbound createOutbound(final Request request, final Order order) {
+        return new Outbound(
+            order.orderNo,
+            order.orderCustomer,
+            order.deliveryRequirements,
+            mapToOutboundProducts(order.orderProducts),
+            request.isPriorityDelivery,
+            request.desiredDeliveryAt
+        );
+    }
+
+    private static List<OutboundProduct> mapToOutboundProducts(
+        final List<OrderProduct> orderProducts) {
+        return orderProducts.stream()
+                            .map(
+                                RegisterOutbound::newOutboundProduct).toList();
+    }
+
+    private static OutboundProduct newOutboundProduct(final OrderProduct orderProduct) {
+        return new OutboundProduct(
+            orderProduct.product,
+            orderProduct.orderQuantity,
+            orderProduct.unitPrice
+        );
+    }
+
     @PostMapping("/outbounds")
     @ResponseStatus(HttpStatus.CREATED)
     public void request(@RequestBody @Valid final Request request) {
@@ -35,22 +62,8 @@ public class RegisterOutbound {
         // 출고에 사용할 포장재를 선택해준다.
 
         // 출고를 생성하고.
-        final List<OutboundProduct> outboundProducts = order.orderProducts.stream()
-                                                                          .map(
-                                                                              orderProduct -> new OutboundProduct(
-                                                                                  orderProduct.product,
-                                                                                  orderProduct.orderQuantity,
-                                                                                  orderProduct.unitPrice
-                                                                              )).toList();
 
-        final Outbound outbound = new Outbound(
-            order.orderNo,
-            order.orderCustomer,
-            order.deliveryRequirements,
-            outboundProducts,
-            request.isPriorityDelivery,
-            request.desiredDeliveryAt
-        );
+        final Outbound outbound = createOutbound(request, order);
 
         // 출고를 등록한다.
         outboundRepository.save(outbound);

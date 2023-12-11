@@ -46,6 +46,14 @@ public class OutboundProduct {
         final Product product,
         final Long orderQuantity,
         final Long unitPrice) {
+        validateConstructor(product, orderQuantity, unitPrice);
+        this.product = product;
+        this.orderQuantity = orderQuantity;
+        this.unitPrice = unitPrice;
+    }
+
+    private static void validateConstructor(final Product product, final Long orderQuantity,
+        final Long unitPrice) {
         Assert.notNull(product, "상품은 필수입니다.");
         Assert.notNull(orderQuantity, "주문 수량은 필수입니다.");
         if (orderQuantity < 1) {
@@ -55,9 +63,6 @@ public class OutboundProduct {
         if (unitPrice < 1) {
             throw new IllegalArgumentException("주문 단가는 1원 이상이어야 합니다.");
         }
-        this.product = product;
-        this.orderQuantity = orderQuantity;
-        this.unitPrice = unitPrice;
     }
 
     public void assignOutbound(final Outbound outbound) {
