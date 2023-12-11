@@ -1,5 +1,7 @@
 package ai.example.company_tmp.outbound.feature;
 
+import ai.example.company_tmp.product.domain.Product;
+import ai.example.company_tmp.product.domain.ProductRepository;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -40,7 +42,17 @@ class RegisterOutboundTest {
 
         public void request(final Request request) {
             // 주문을 먼저 조회
-            orderRepository.getBy(request.orderNo);
+            Order order = orderRepository.getBy(request.orderNo);
+            // 주문 정보를 가져오고
+
+            // 주문 정보에 맞는 상품의 재고가 충분한지 확인하고 충분하지 않으면 예외를 던진다.
+
+            // 출고에 사용할 포장재를 선택해준다.
+
+            // 출고를 생성하고.
+            order.orderProducts)
+            // 출고를 등록한다.
+
         }
 
         public record Request(
@@ -58,6 +70,8 @@ class RegisterOutboundTest {
 
     public class OrderRepository {
 
+        private ProductRepository productRepository;
+
         public Order getBy(final Long orderNo) {
             return new Order(
                 orderNo,
@@ -70,7 +84,7 @@ class RegisterOutboundTest {
                 ),
                 "배송 요구사항",
                 Collections.singletonList(new OrderProduct(
-                    1L,
+                    productRepository.getBy(1L),
                     1500L,
                     1L
                 ))
@@ -123,16 +137,16 @@ class RegisterOutboundTest {
 
     public class OrderProduct {
 
-        private final Long productNo;
+        private final Product product;
         private final Long orderQuantity;
         private final Long unitPrice;
 
         public OrderProduct(
-            final Long productNo,
+            final Product product,
             final Long orderQuantity,
             final Long unitPrice) {
 
-            this.productNo = productNo;
+            this.product = product;
             this.orderQuantity = orderQuantity;
             this.unitPrice = unitPrice;
         }
