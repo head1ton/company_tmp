@@ -26,13 +26,19 @@ class RegisterOutboundTest {
             isPriorityDelivery,
             desiredDeliveryAt
         );
+
         registerOutbound.request(request);
+
+        // TODO 출고가 등록되었는지 확인.
     }
 
     public class RegisterOutbound {
 
+        private OrderRepository orderRepository;
+
         public void request(final Request request) {
-            throw new UnsupportedOperationException("Unsupported request");
+            // 주문을 먼저 조회
+            orderRepository.getBy(request.orderNo);
         }
 
         public record Request(
@@ -45,6 +51,13 @@ class RegisterOutboundTest {
                 Assert.notNull(isPriorityDelivery, "우선출고여부는 필수입니다.");
                 Assert.notNull(desiredDeliveryAt, "희망출고일은 필수입니다.");
             }
+        }
+    }
+
+    public class OrderRepository {
+
+        public void getBy(final Long orderNo) {
+            throw new UnsupportedOperationException("Unsupported getBy");
         }
     }
 }
