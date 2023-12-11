@@ -23,14 +23,15 @@ import org.springframework.util.Assert;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Outbound {
 
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Comment("주문 번호")
-    private Long orderNo;
-    @Getter
     @Column(name = "outbound_no")
     @Comment("출고 번호")
     private Long outboundNo;
+    @Comment("주문 번호")
+    @Column(name = "order_no")
+    private Long orderNo;
     @Embedded
     private OrderCustomer orderCustomer;
     @Column(name = "delivery_requirements", nullable = false)
