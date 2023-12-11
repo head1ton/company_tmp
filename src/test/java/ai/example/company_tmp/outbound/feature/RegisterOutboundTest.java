@@ -1,6 +1,9 @@
 package ai.example.company_tmp.outbound.feature;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -59,11 +62,14 @@ class RegisterOutboundTest {
         public void getBy(final Long orderNo) {
             final OrderCustomer orderCustomer = new OrderCustomer();
             final String deliveryRequirements = "배송 요구사항";
+            final OrderProduct orderProduct = null;
+            final List<OrderProduct> orderProducts = Collections.singletonList(orderProduct);
             new Order(
                 orderNo,
                 orderCustomer,
                 deliveryRequirements,
-                )
+                orderProduct,
+                );
         }
     }
 
@@ -72,6 +78,10 @@ class RegisterOutboundTest {
     }
 
     public class OrderCustomer {
+
+    }
+
+    public class OrderProduct {
 
     }
 }
