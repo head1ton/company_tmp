@@ -12,6 +12,7 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 import org.springframework.util.Assert;
@@ -32,6 +33,7 @@ public class LPN {
     private String lpnBarcode;
     @Column(name = "expiration_at", nullable = false)
     @Comment("유통기한")
+    @Getter
     private LocalDateTime expirationAt;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "inbound_item_id", nullable = false)
@@ -59,4 +61,7 @@ public class LPN {
         Assert.notNull(inboundItem, "입고 상품은 필수입니다.");
     }
 
+    public Long getProductNo() {
+        return this.inboundItem.getProductNo();
+    }
 }

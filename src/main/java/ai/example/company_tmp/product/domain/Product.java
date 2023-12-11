@@ -26,7 +26,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_no")
     @Comment("상품 번호")
-    private Long id;
+    private Long productNo;
     @Column(name = "name", nullable = false)
     @Comment("상품명")
     private String name;
@@ -95,13 +95,5 @@ public class Product {
         Assert.notNull(temperatureZone, "temperature zone 필수입니다.");
         Assert.notNull(weightInGrams, "weightInGrams 필수입니다.");
         Assert.notNull(productSize, "상품 크기는 필수입니다.");
-    }
-
-    public void assignId(final Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
     }
 }

@@ -20,7 +20,6 @@ import org.hibernate.annotations.Comment;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Comment("재고")
 public class Inventory {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "inventory_no")
@@ -39,20 +38,20 @@ public class Inventory {
     @Column(name = "inventory_quantity", nullable = false)
     @Comment("재고 수량")
     private Long inventoryQuantity;
+    @Column(name = "product_no", nullable = false)
+    @Comment("상품 번호")
+    private Long productNo;
 
     public Inventory(final Location location, final LPN lpn) {
 
         this.location = location;
         this.lpn = lpn;
         inventoryQuantity = 1L;
+        this.productNo = lpn.getProductNo();
     }
 
     public void increaseQuantity() {
         inventoryQuantity++;
-    }
-
-    public LPN getLPN() {
-        return lpn;
     }
 
     public boolean matchLpnToLocation(final LPN lpn) {

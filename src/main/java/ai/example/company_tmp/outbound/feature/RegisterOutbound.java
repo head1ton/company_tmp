@@ -1,5 +1,7 @@
 package ai.example.company_tmp.outbound.feature;
 
+import ai.example.company_tmp.location.domain.Inventory;
+import ai.example.company_tmp.location.domain.InventoryRepository;
 import ai.example.company_tmp.outbound.domain.Order;
 import ai.example.company_tmp.outbound.domain.OrderProduct;
 import ai.example.company_tmp.outbound.domain.OrderRepository;
@@ -9,6 +11,7 @@ import ai.example.company_tmp.outbound.domain.OutboundRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +26,7 @@ public class RegisterOutbound {
 
     private final OrderRepository orderRepository;
     private final OutboundRepository outboundRepository;
+    private final InventoryRepository inventoryRepository;
 
     private static Outbound createOutbound(final Request request, final Order order) {
         return new Outbound(
@@ -54,10 +58,16 @@ public class RegisterOutbound {
     @ResponseStatus(HttpStatus.CREATED)
     public void request(@RequestBody @Valid final Request request) {
         // 주문을 먼저 조회
-        final Order order = orderRepository.getBy(request.orderNo);
         // 주문 정보를 가져오고
+        final Order order = orderRepository.getBy(request.orderNo);
 
         // 주문 정보에 맞는 상품의 재고가 충분한지 확인하고 충분하지 않으면 예외를 던진다.
+        for (final OrderProduct orderProduct : order.orderProducts()) {
+            // 해당 상품의 재고를 전부 가져온다.
+            final List<Inventory> inventories = inventoryRepository.findByProductNo(
+                orderProduct.getProductNo());
+            validateInventory(inventories, orderProduct.orderQuantity());
+        }
 
         // 출고에 사용할 포장재를 선택해준다.
 
@@ -67,6 +77,23 @@ public class RegisterOutbound {
 
         // 출고를 등록한다.
         outboundRepository.save(outbound);
+    }
+
+    void validateInventory(
+        final List<Inventory> inventories,
+        final Long orderQuantity) {
+        final long totalInventoryQuantity = inventories.stream()
+                                                       .filter(i -> i.getInventoryQuantity() > 0L)
+                                                       .filter(i -> i.getLpn().getExpirationAt()
+                                                                     .isAfter(LocalDateTime.now()))
+                                                       .mapToLong(Inventory::getInventoryQuantity)
+                                                       .sum();
+        // 재고가 주문한 수량보다 적으면 예외를 던진다
+        if (totalInventoryQuantity < orderQuantity) {
+            throw new IllegalArgumentException(
+                "재고가 부족합니다. 재고 수량: %d, 주문 수량: %d".formatted(totalInventoryQuantity, orderQuantity)
+            );
+        }
     }
 
     public record Request(
