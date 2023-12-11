@@ -2,7 +2,9 @@ package ai.example.company_tmp.outbound.domain;
 
 import ai.example.company_tmp.product.domain.ProductRepository;
 import java.util.Collections;
+import org.springframework.stereotype.Component;
 
+@Component
 public class OrderRepository {
 
     private final ProductRepository productRepository;

@@ -1,12 +1,30 @@
 package ai.example.company_tmp.outbound.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Comment;
+
+@Embeddable
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderCustomer {
 
-    private final String name;
-    private final String email;
-    private final String phone;
-    private final String zipNo;
-    private final String address;
+    @Column(name = "order_customer_name", nullable = false)
+    @Comment("주문 고객 이름")
+    private String name;
+    @Column(name = "order_customer_email", nullable = false)
+    @Comment("주문 고객 이메일")
+    private String email;
+    @Column(name = "order_customer_phone", nullable = false)
+    @Comment("주문 고객 전화번호")
+    private String phone;
+    @Column(name = "order_customer_zipno", nullable = false)
+    @Comment("주문 고객 우편번호")
+    private String zipNo;
+    @Column(name = "order_customer_address", nullable = false)
+    @Comment("주문 고객 주소")
+    private String address;
 
     public OrderCustomer(
         final String name,

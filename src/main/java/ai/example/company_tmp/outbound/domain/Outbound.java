@@ -1,18 +1,49 @@
 package ai.example.company_tmp.outbound.domain;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Comment;
 import org.springframework.util.Assert;
 
+@Entity
+@Table(name = "outbound")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Outbound {
 
-    private final Long orderNo;
-    private final OrderCustomer orderCustomer;
-    private final String deliveryRequirements;
-    private final List<OutboundProduct> outboundProducts;
-    private final Boolean isPriorityDelivery;
-    private final LocalDate desiredDeliveryAt;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Comment("주문 번호")
+    private Long orderNo;
+    @Getter
+    @Column(name = "outbound_no")
+    @Comment("출고 번호")
     private Long outboundNo;
+    @Embedded
+    private OrderCustomer orderCustomer;
+    @Column(name = "delivery_requirements", nullable = false)
+    @Comment("배송 요구사항")
+    private String deliveryRequirements;
+    @OneToMany(mappedBy = "outbound", orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<OutboundProduct> outboundProducts = new ArrayList<>();
+    @Column(name = "is_priority_delivery", nullable = false)
+    @Comment("우선 출고 여부")
+    private Boolean isPriorityDelivery;
+    @Column(name = "desired_delivery_at", nullable = false)
+    @Comment("희망 출고일")
+    private LocalDate desiredDeliveryAt;
 
     public Outbound(
         final Long orderNo,
@@ -31,16 +62,14 @@ public class Outbound {
         this.orderNo = orderNo;
         this.orderCustomer = orderCustomer;
         this.deliveryRequirements = deliveryRequirements;
-        this.outboundProducts = outboundProducts;
         this.isPriorityDelivery = isPriorityDelivery;
         this.desiredDeliveryAt = desiredDeliveryAt;
+        this.outboundProducts = outboundProducts;
+        outboundProducts.forEach(outboundProduct -> outboundProduct.assignOutbound(this));
     }
 
     public void assignNo(final Long outboundNo) {
         this.outboundNo = outboundNo;
     }
 
-    public Long getOutboundNo() {
-        return outboundNo;
-    }
 }
