@@ -42,7 +42,7 @@ class RegisterOutboundTest {
 
         public void request(final Request request) {
             // 주문을 먼저 조회
-            Order order = orderRepository.getBy(request.orderNo);
+            final Order order = orderRepository.getBy(request.orderNo);
             // 주문 정보를 가져오고
 
             // 주문 정보에 맞는 상품의 재고가 충분한지 확인하고 충분하지 않으면 예외를 던진다.
@@ -50,7 +50,16 @@ class RegisterOutboundTest {
             // 출고에 사용할 포장재를 선택해준다.
 
             // 출고를 생성하고.
-            order.orderProducts)
+            final List<OutboundProduct> outboundProducts = order.orderProducts.stream()
+                                                                              .map(
+                                                                            orderProduct -> new OutboundProduct(
+                                                                                orderProduct.product,
+                                                                                orderProduct.orderQuantity,
+                                                                                orderProduct.unitPrice
+                                                                            )).toList();
+
+
+
             // 출고를 등록한다.
 
         }
@@ -146,6 +155,31 @@ class RegisterOutboundTest {
             final Long orderQuantity,
             final Long unitPrice) {
 
+            this.product = product;
+            this.orderQuantity = orderQuantity;
+            this.unitPrice = unitPrice;
+        }
+    }
+
+    public class OutboundProduct {
+
+        private final Product product;
+        private final Long orderQuantity;
+        private final Long unitPrice;
+
+        public OutboundProduct(
+            final Product product,
+            final Long orderQuantity,
+            final Long unitPrice) {
+            Assert.notNull(product, "상품은 필수입니다.");
+            Assert.notNull(orderQuantity, "주문 수량은 필수입니다.");
+            if (orderQuantity < 1) {
+                throw new IllegalArgumentException("주문 수량은 1개 이상이어야 합니다..");
+            }
+            Assert.notNull(unitPrice, "단가는 필수입니다.");
+            if (unitPrice < 1) {
+                throw new IllegalArgumentException("주문 단가는 1원 이상이어야 합니다.");
+            }
             this.product = product;
             this.orderQuantity = orderQuantity;
             this.unitPrice = unitPrice;
