@@ -4,7 +4,9 @@ import ai.example.company_tmp.product.domain.Product;
 import ai.example.company_tmp.product.domain.ProductRepository;
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,6 +41,7 @@ class RegisterOutboundTest {
     public class RegisterOutbound {
 
         private OrderRepository orderRepository;
+        private OutboundRepository outboundRepository;
 
         public void request(final Request request) {
             // 주문을 먼저 조회
@@ -68,7 +71,7 @@ class RegisterOutboundTest {
             );
 
             // 출고를 등록한다.
-
+            outboundRepository.save(outbound);
         }
 
         public record Request(
@@ -195,6 +198,7 @@ class RegisterOutboundTest {
 
     private class Outbound {
 
+        private Long outboundNo;
         private final Long orderNo;
         private final OrderCustomer orderCustomer;
         private final String deliveryRequirements;
@@ -222,6 +226,25 @@ class RegisterOutboundTest {
             this.outboundProducts = outboundProducts;
             this.isPriorityDelivery = isPriorityDelivery;
             this.desiredDeliveryAt = desiredDeliveryAt;
+        }
+
+        public void assignNo(final Long outboundNo) {
+            this.outboundNo = outboundNo;
+        }
+
+        public Long getOutboundNo() {
+            return outboundNo;
+        }
+    }
+
+    public class OutboundRepository {
+
+        private final Map<Long, Outbound> outbounds = new HashMap<>();
+        private Long sequence = 1L;
+
+        public void save(final Outbound outbound) {
+            outbound.assignNo(sequence++);
+            outbounds.put(outbound.getOutboundNo(), outbound);
         }
     }
 }
