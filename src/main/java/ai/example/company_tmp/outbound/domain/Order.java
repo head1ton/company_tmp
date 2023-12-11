@@ -1,7 +1,11 @@
 package ai.example.company_tmp.outbound.domain;
 
 import java.util.List;
+import lombok.Getter;
+import lombok.experimental.Accessors;
 
+@Accessors(fluent = true)
+@Getter
 public class Order {
 
     public final Long orderNo;

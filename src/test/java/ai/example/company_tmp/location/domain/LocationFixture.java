@@ -6,7 +6,7 @@ public class LocationFixture {
     private StorageType storageType = StorageType.TOTE;
     private UsagePurpose usagePurpose = UsagePurpose.MOVE;
 
-    public static LocationFixture anLocationFixture() {
+    public static LocationFixture aLocation() {
         return new LocationFixture();
     }
 
@@ -25,7 +25,7 @@ public class LocationFixture {
         return this;
     }
 
-    Location build() {
+    public Location build() {
 
         return new Location(locationBarcode, storageType, usagePurpose);
     }

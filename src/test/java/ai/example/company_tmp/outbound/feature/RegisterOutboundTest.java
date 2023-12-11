@@ -23,5 +23,4 @@ class RegisterOutboundTest extends ApiTest {
 
         assertThat(outboundRepository.findAll()).hasSize(1);
     }
-
 }

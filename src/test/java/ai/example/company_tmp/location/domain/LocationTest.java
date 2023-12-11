@@ -21,7 +21,7 @@ class LocationTest {
     @Test
     @DisplayName("로케이션에 LPN을 할당한다.")
     void assignLPN() {
-        final Location location = LocationFixture.anLocationFixture().build();
+        final Location location = LocationFixture.aLocation().build();
 
         final LPN lpn = LPNFixture.anLPN().build();
 
@@ -33,7 +33,7 @@ class LocationTest {
     @Test
     @DisplayName("로케이션에 LPN을 할당한다. 이미 LPN이 존재하면 생성하지 않고 재고만 증가시킨다.")
     void already_exists_assignLPN() {
-        final Location location = LocationFixture.anLocationFixture().build();
+        final Location location = LocationFixture.aLocation().build();
 
         final LPN lpn = LPNFixture.anLPN().build();
         final LPN lpn2 = LPNFixture.anLPN().build();

@@ -1,5 +1,6 @@
 package ai.example.company_tmp.outbound.feature;
 
+import ai.example.company_tmp.location.domain.InventoryRepository;
 import ai.example.company_tmp.outbound.domain.Order;
 import ai.example.company_tmp.outbound.domain.OrderProduct;
 import ai.example.company_tmp.outbound.domain.OrderRepository;
@@ -23,6 +24,7 @@ public class RegisterOutbound {
 
     private final OrderRepository orderRepository;
     private final OutboundRepository outboundRepository;
+    private final InventoryRepository inventoryRepository;
 
     private static Outbound createOutbound(final Request request, final Order order) {
         return new Outbound(
@@ -54,10 +56,13 @@ public class RegisterOutbound {
     @ResponseStatus(HttpStatus.CREATED)
     public void request(@RequestBody @Valid final Request request) {
         // 주문을 먼저 조회
-        final Order order = orderRepository.getBy(request.orderNo);
         // 주문 정보를 가져오고
+        final Order order = orderRepository.getBy(request.orderNo);
 
         // 주문 정보에 맞는 상품의 재고가 충분한지 확인하고 충분하지 않으면 예외를 던진다.
+        final List<Inventories> inventoriesList = inventoriesList(order.orderProducts());
+        // 해당 상품의 재고를 전부 가져온다.
+        inventoriesList.forEach(Inventories::validateInventory);
 
         // 출고에 사용할 포장재를 선택해준다.
 
@@ -67,6 +72,15 @@ public class RegisterOutbound {
 
         // 출고를 등록한다.
         outboundRepository.save(outbound);
+    }
+
+    private List<Inventories> inventoriesList(final List<OrderProduct> orderProducts) {
+        return orderProducts.stream()
+                            .map(orderProduct -> new Inventories(
+                                inventoryRepository.findByProductNo(
+                                    orderProduct.getProductNo()),
+                                orderProduct.orderQuantity()))
+                            .toList();
     }
 
     public record Request(
