@@ -57,7 +57,21 @@ class RegisterOutboundTest {
     public class OrderRepository {
 
         public void getBy(final Long orderNo) {
-            throw new UnsupportedOperationException("Unsupported getBy");
+            final OrderCustomer orderCustomer = new OrderCustomer();
+            final String deliveryRequirements = "배송 요구사항";
+            new Order(
+                orderNo,
+                orderCustomer,
+                deliveryRequirements,
+                )
         }
+    }
+
+    public class Order {
+
+    }
+
+    public class OrderCustomer {
+
     }
 }
