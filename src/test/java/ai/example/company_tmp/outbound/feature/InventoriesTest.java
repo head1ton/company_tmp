@@ -9,18 +9,10 @@ import ai.example.company_tmp.location.domain.Location;
 import ai.example.company_tmp.location.domain.LocationFixture;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class RegisterOutboundUnitTest {
-
-    private RegisterOutbound registerOutbound;
-
-    @BeforeEach
-    void setUp() {
-        registerOutbound = new RegisterOutbound(null, null, null);
-    }
+class InventoriesTest {
 
     @Test
     @DisplayName("주문한 상품을 출고할 수 있는 재고가 있는지 확인한다.")
