@@ -1,7 +1,6 @@
-package ai.example.company_tmp.outbound.feature;
+package ai.example.company_tmp.outbound.domain;
 
-import ai.example.company_tmp.outbound.domain.MaterialType;
-import ai.example.company_tmp.outbound.domain.PackagingMaterial;
+import ai.example.company_tmp.outbound.feature.PackagingMaterialDimensionFixture;
 
 public class PackagingMaterialFixture {
 

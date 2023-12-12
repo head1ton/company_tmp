@@ -48,6 +48,7 @@ public class Outbound {
     @Column(name = "desired_delivery_at", nullable = false)
     @Comment("희망 출고일")
     private LocalDate desiredDeliveryAt;
+    @Getter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "packaging_material_no")
     private PackagingMaterial recommendedPackagingMaterial;

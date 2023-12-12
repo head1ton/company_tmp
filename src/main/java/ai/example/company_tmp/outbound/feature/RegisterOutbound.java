@@ -12,9 +12,7 @@ import ai.example.company_tmp.outbound.domain.PackagingMaterialRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,16 +31,17 @@ public class RegisterOutbound {
     private final PackagingMaterialRepository packagingMaterialRepository;
 
     private static Outbound createOutbound(
-        final Request request,
         final Order order,
-        final PackagingMaterial packagingMaterial) {
+        final PackagingMaterial packagingMaterial,
+        final Boolean isPriorityDelivery,
+        final LocalDate desiredDeliveryAt) {
         return new Outbound(
             order.orderNo,
             order.orderCustomer,
             order.deliveryRequirements,
             mapToOutboundProducts(order.orderProducts),
-            request.isPriorityDelivery,
-            request.desiredDeliveryAt,
+            isPriorityDelivery,
+            desiredDeliveryAt,
             packagingMaterial
         );
     }
@@ -72,31 +71,32 @@ public class RegisterOutbound {
 
         // 주문 정보에 맞는 상품의 재고가 충분한지 확인하고 충분하지 않으면 예외를 던진다.
         final List<Inventories> inventoriesList = inventoriesList(order.orderProducts());
-        // 해당 상품의 재고를 전부 가져온다.
-        inventoriesList.forEach(Inventories::validateInventory);
+        final PackagingMaterials packagingMaterials = new PackagingMaterials(
+            packagingMaterialRepository.findAll());
 
-        // 출고에 사용할 포장재를 선택(추천)해준다.
-        final Optional<PackagingMaterial> optimalPackagingMaterial = findOptimalPackagingMaterial(
-            order, packagingMaterialRepository.findAll());
-
-        // 출고를 생성하고.
-        final Outbound outbound = createOutbound(request, order,
-            optimalPackagingMaterial.orElse(null));
+        final Outbound outbound = createOutbound(
+            inventoriesList, packagingMaterials, order, request.isPriorityDelivery,
+            request.desiredDeliveryAt);
 
         // 출고를 등록한다.
         outboundRepository.save(outbound);
     }
 
-    Optional<PackagingMaterial> findOptimalPackagingMaterial(final Order order,
-        final List<PackagingMaterial> packagingMaterials) {
-        return packagingMaterials.stream()
-                                 .filter(
-                                     pm -> pm.isAvailable(
-                                         order.totalWeight(),
-                                         order.totalVolume()))
-                                 .min(
-                                     Comparator.comparingLong(
-                                         PackagingMaterial::outerVolume));
+    Outbound createOutbound(
+        final List<Inventories> inventoriesList,
+        final PackagingMaterials packagingMaterials,
+        final Order order,
+        final Boolean isPriorityDelivery,
+        final LocalDate desiredDeliveryAt) {
+
+        inventoriesList.forEach(Inventories::validateInventory);
+
+        return createOutbound(
+            order,
+            packagingMaterials.findOptimalPackagingMaterial(
+                order.totalWeight(), order.totalVolume()).orElse(null),
+            isPriorityDelivery,
+            desiredDeliveryAt);
     }
 
     private List<Inventories> inventoriesList(final List<OrderProduct> orderProducts) {
