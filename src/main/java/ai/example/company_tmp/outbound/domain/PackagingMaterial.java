@@ -72,4 +72,13 @@ public class PackagingMaterial {
         Assert.notNull(maxWeightInGrams, "최대 무게는 필수입니다.");
         Assert.notNull(materialType, "포장재 종류는 필수입니다.");
     }
+
+    public Boolean isAvailable(final Long totalWeight, final Long totalVolume) {
+        return maxWeightInGrams >= totalWeight && packagingMaterialDimension.isAvailable(
+            totalVolume);
+    }
+
+    public Long outerVolume() {
+        return packagingMaterialDimension.outerVolume();
+    }
 }

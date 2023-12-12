@@ -96,4 +96,8 @@ public class Product {
         Assert.notNull(weightInGrams, "weightInGrams 필수입니다.");
         Assert.notNull(productSize, "상품 크기는 필수입니다.");
     }
+
+    public Long getVolume() {
+        return productSize.getVolume();
+    }
 }
