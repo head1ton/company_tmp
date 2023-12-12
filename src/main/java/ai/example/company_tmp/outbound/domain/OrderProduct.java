@@ -22,7 +22,15 @@ public class OrderProduct {
         this.unitPrice = unitPrice;
     }
 
+    public Long getWeight() {
+        return product.getWeightInGrams() * orderQuantity;
+    }
+
     public Long getProductNo() {
         return product.getProductNo();
+    }
+
+    public Long getVolume() {
+        return product.getVolume() * orderQuantity;
     }
 }

@@ -1,5 +1,6 @@
 package ai.example.company_tmp.outbound.feature;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import ai.example.company_tmp.inbound.domain.LPN;
@@ -7,21 +8,51 @@ import ai.example.company_tmp.inbound.domain.LPNFixture;
 import ai.example.company_tmp.location.domain.Inventory;
 import ai.example.company_tmp.location.domain.Location;
 import ai.example.company_tmp.location.domain.LocationFixture;
+import ai.example.company_tmp.outbound.domain.Order;
+import ai.example.company_tmp.outbound.domain.OrderFixture;
+import ai.example.company_tmp.outbound.domain.OrderProductFixture;
+import ai.example.company_tmp.outbound.domain.PackagingMaterial;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
 
 
 class RegisterOutboundUnitTest {
-
     private RegisterOutbound registerOutbound;
 
     @BeforeEach
     void setUp() {
-        registerOutbound = new RegisterOutbound(null, null, null);
+        registerOutbound = new RegisterOutbound(null, null, null, null);
+    }
+
+    @Test
+    @DisplayName("주문한 상품을 포장할 수 있는 포장재를 찾는다")
+    void findOptimalPackagingMaterial() {
+        final Order order = OrderFixture.anOrder().build();
+        final PackagingMaterial packagingMaterial = PackagingMaterialFixture.aPackagingMaterial()
+                                                                            .build();
+
+        final Optional<PackagingMaterial> optimalPackagingMaterial = registerOutbound.findOptimalPackagingMaterial(
+            order, List.of(packagingMaterial));
+
+        assertThat(optimalPackagingMaterial.isPresent()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("주문한 상품을 포장할 수 있는 포장재를 찾는다 - 실패")
+    void empty_findOptimalPackagingMaterial() {
+        final Order order = OrderFixture.anOrder().orderProduct(
+            OrderProductFixture.anOrderProduct().orderQuantity(100L)).build();
+        final PackagingMaterial packagingMaterial = PackagingMaterialFixture.aPackagingMaterial()
+                                                                            .build();
+
+        final Optional<PackagingMaterial> optimalPackagingMaterial = registerOutbound.findOptimalPackagingMaterial(
+            order, List.of(packagingMaterial));
+
+        assertThat(optimalPackagingMaterial.isPresent()).isEqualTo(false);
     }
 
     @Test

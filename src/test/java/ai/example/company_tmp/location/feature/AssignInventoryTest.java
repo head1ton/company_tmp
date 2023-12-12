@@ -24,9 +24,11 @@ class AssignInventoryTest extends ApiTest {
     @BeforeEach
     void setUpAssignInventory() {
         Scenario
-            .registerProduct().request()
-            .registerInbound().request()
-            .confirmInbound().request()
+            .registerProduct().request();
+        Scenario
+        .registerInbound().request();
+        Scenario
+        .confirmInbound().request()
             .registerLPN().request()
             .registerLocation().request();
 
@@ -37,7 +39,7 @@ class AssignInventoryTest extends ApiTest {
     @Transactional
     void assignInventory() {
 
-        Scenario.assignInventory().build();
+        Scenario.assignInventory().request();
 
         assertAssignInventory();
     }

@@ -21,7 +21,7 @@ public class AssignInventoryApi {
         return this;
     }
 
-    public Scenario build() {
+    public Scenario request() {
         final Request request = new Request(
             locationBarcode,
             lpnBarcode
