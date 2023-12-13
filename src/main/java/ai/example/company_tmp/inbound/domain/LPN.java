@@ -64,4 +64,10 @@ public class LPN {
     public Long getProductNo() {
         return this.inboundItem.getProductNo();
     }
+
+    public boolean isFresh() {
+        return this.expirationAt
+            .isAfter(
+                LocalDateTime.now());
+    }
 }

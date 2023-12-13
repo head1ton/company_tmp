@@ -1,25 +1,14 @@
 package ai.example.company_tmp.outbound.feature;
 
 import ai.example.company_tmp.location.domain.Inventory;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public record Inventories(List<Inventory> inventories, Long orderQuantity) {
 
-    private static boolean hasInventory(final Inventory i) {
-        return i.getInventoryQuantity() > 0L;
-    }
-
-    private static boolean isFresh(final Inventory i) {
-        return i.getLpn().getExpirationAt()
-                .isAfter(
-                    LocalDateTime.now());
-    }
-
     void validateInventory() {
         final long totalInventoryQuantity = inventories().stream()
-                                                         .filter(i -> hasInventory(i))
-                                                         .filter(i -> isFresh(i))
+                                                         .filter(Inventory::hasInventory)
+                                                         .filter(Inventory::isFresh)
                                                          .mapToLong(Inventory::getInventoryQuantity)
                                                          .sum();
         // 재고가 주문한 수량보다 적으면 예외를 던진다
