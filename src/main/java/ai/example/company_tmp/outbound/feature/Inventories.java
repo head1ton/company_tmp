@@ -10,12 +10,16 @@ public record Inventories(List<Inventory> inventories, Long orderQuantity) {
         return i.getInventoryQuantity() > 0L;
     }
 
+    private static boolean isFresh(final Inventory i) {
+        return i.getLpn().getExpirationAt()
+                .isAfter(
+                    LocalDateTime.now());
+    }
+
     void validateInventory() {
         final long totalInventoryQuantity = inventories().stream()
                                                          .filter(i -> hasInventory(i))
-                                                         .filter(i -> i.getLpn().getExpirationAt()
-                                                                       .isAfter(
-                                                                           LocalDateTime.now()))
+                                                         .filter(i -> isFresh(i))
                                                          .mapToLong(Inventory::getInventoryQuantity)
                                                          .sum();
         // 재고가 주문한 수량보다 적으면 예외를 던진다
