@@ -6,9 +6,13 @@ import java.util.List;
 
 public record Inventories(List<Inventory> inventories, Long orderQuantity) {
 
+    private static boolean hasInventory(final Inventory i) {
+        return i.getInventoryQuantity() > 0L;
+    }
+
     void validateInventory() {
         final long totalInventoryQuantity = inventories().stream()
-                                                         .filter(i -> i.getInventoryQuantity() > 0L)
+                                                         .filter(i -> hasInventory(i))
                                                          .filter(i -> i.getLpn().getExpirationAt()
                                                                        .isAfter(
                                                                            LocalDateTime.now()))

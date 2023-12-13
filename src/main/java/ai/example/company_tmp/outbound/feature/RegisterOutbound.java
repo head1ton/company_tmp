@@ -9,6 +9,7 @@ import ai.example.company_tmp.outbound.domain.OutboundProduct;
 import ai.example.company_tmp.outbound.domain.OutboundRepository;
 import ai.example.company_tmp.outbound.domain.PackagingMaterial;
 import ai.example.company_tmp.outbound.domain.PackagingMaterialRepository;
+import ai.example.company_tmp.outbound.domain.PackagingMaterials;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;

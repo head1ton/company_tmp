@@ -2,6 +2,7 @@ package ai.example.company_tmp.outbound.feature;
 
 import ai.example.company_tmp.outbound.domain.PackagingMaterial;
 import ai.example.company_tmp.outbound.domain.PackagingMaterialFixture;
+import ai.example.company_tmp.outbound.domain.PackagingMaterials;
 import java.util.Arrays;
 import java.util.List;
 
