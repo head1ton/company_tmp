@@ -6,11 +6,11 @@ import java.util.List;
 public record Inventories(List<Inventory> inventories, Long orderQuantity) {
 
     void validateInventory() {
-        final long totalInventoryQuantity = inventories().stream()
-                                                         .filter(Inventory::hasInventory)
-                                                         .filter(Inventory::isFresh)
-                                                         .mapToLong(Inventory::getInventoryQuantity)
-                                                         .sum();
+        final long totalInventoryQuantity = calculateTotalFreshInventory();
+        validateInventory(totalInventoryQuantity);
+    }
+
+    private void validateInventory(final long totalInventoryQuantity) {
         // 재고가 주문한 수량보다 적으면 예외를 던진다
         if (totalInventoryQuantity < orderQuantity()) {
             throw new IllegalArgumentException(
@@ -18,5 +18,13 @@ public record Inventories(List<Inventory> inventories, Long orderQuantity) {
                     orderQuantity())
             );
         }
+    }
+
+    private long calculateTotalFreshInventory() {
+        return inventories().stream()
+                            .filter(Inventory::hasInventory)
+                            .filter(Inventory::isFresh)
+                            .mapToLong(Inventory::getInventoryQuantity)
+                            .sum();
     }
 }
