@@ -1,6 +1,6 @@
 package ai.example.company_tmp.outbound.domain;
 
-import ai.example.company_tmp.product.fixture.ProductFixture;
+import ai.example.company_tmp.product.domain.ProductFixture;
 
 public class OrderProductFixture {
 

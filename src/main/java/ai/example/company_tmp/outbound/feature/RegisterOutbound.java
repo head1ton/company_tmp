@@ -1,13 +1,12 @@
 package ai.example.company_tmp.outbound.feature;
 
 import ai.example.company_tmp.location.domain.InventoryRepository;
+import ai.example.company_tmp.outbound.domain.Inventories;
 import ai.example.company_tmp.outbound.domain.Order;
 import ai.example.company_tmp.outbound.domain.OrderProduct;
 import ai.example.company_tmp.outbound.domain.OrderRepository;
 import ai.example.company_tmp.outbound.domain.Outbound;
-import ai.example.company_tmp.outbound.domain.OutboundProduct;
 import ai.example.company_tmp.outbound.domain.OutboundRepository;
-import ai.example.company_tmp.outbound.domain.PackagingMaterial;
 import ai.example.company_tmp.outbound.domain.PackagingMaterialRepository;
 import ai.example.company_tmp.outbound.domain.PackagingMaterials;
 import jakarta.validation.Valid;
@@ -30,37 +29,7 @@ public class RegisterOutbound {
     private final OutboundRepository outboundRepository;
     private final InventoryRepository inventoryRepository;
     private final PackagingMaterialRepository packagingMaterialRepository;
-
-    private static Outbound createOutbound(
-        final Order order,
-        final PackagingMaterial packagingMaterial,
-        final Boolean isPriorityDelivery,
-        final LocalDate desiredDeliveryAt) {
-        return new Outbound(
-            order.orderNo,
-            order.orderCustomer,
-            order.deliveryRequirements,
-            mapToOutboundProducts(order.orderProducts),
-            isPriorityDelivery,
-            desiredDeliveryAt,
-            packagingMaterial
-        );
-    }
-
-    private static List<OutboundProduct> mapToOutboundProducts(
-        final List<OrderProduct> orderProducts) {
-        return orderProducts.stream()
-                            .map(
-                                RegisterOutbound::newOutboundProduct).toList();
-    }
-
-    private static OutboundProduct newOutboundProduct(final OrderProduct orderProduct) {
-        return new OutboundProduct(
-            orderProduct.product,
-            orderProduct.orderQuantity,
-            orderProduct.unitPrice
-        );
-    }
+    private final ConstructOutbound constructOutbound = new ConstructOutbound();
 
     @PostMapping("/outbounds")
     @ResponseStatus(HttpStatus.CREATED)
@@ -75,38 +44,21 @@ public class RegisterOutbound {
         final PackagingMaterials packagingMaterials = new PackagingMaterials(
             packagingMaterialRepository.findAll());
 
-        final Outbound outbound = createOutbound(
-            inventoriesList, packagingMaterials, order, request.isPriorityDelivery,
+        final Outbound outbound = constructOutbound.create(
+            inventoriesList,
+            packagingMaterials,
+            order,
+            request.isPriorityDelivery,
             request.desiredDeliveryAt);
 
         // 출고를 등록한다.
         outboundRepository.save(outbound);
     }
 
-    Outbound createOutbound(
-        final List<Inventories> inventoriesList,
-        final PackagingMaterials packagingMaterials,
-        final Order order,
-        final Boolean isPriorityDelivery,
-        final LocalDate desiredDeliveryAt) {
-
-        inventoriesList.forEach(Inventories::validateInventory);
-
-        return createOutbound(
-            order,
-            packagingMaterials.findOptimalPackagingMaterial(
-                order.totalWeight(), order.totalVolume()).orElse(null),
-            isPriorityDelivery,
-            desiredDeliveryAt);
-    }
-
     private List<Inventories> inventoriesList(final List<OrderProduct> orderProducts) {
         return orderProducts.stream()
-                            .map(orderProduct -> new Inventories(
-                                inventoryRepository.findByProductNo(
-                                    orderProduct.getProductNo()),
-                                orderProduct.orderQuantity()))
-                            .toList();
+                            .map(orderProduct -> inventoryRepository.inventoriesBy(
+                                orderProduct.getProductNo())).toList();
     }
 
     public record Request(
