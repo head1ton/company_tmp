@@ -14,6 +14,7 @@ import ai.example.company_tmp.outbound.domain.OrderProductFixture;
 import ai.example.company_tmp.outbound.domain.Outbound;
 import ai.example.company_tmp.outbound.domain.PackagingMaterial;
 import ai.example.company_tmp.outbound.domain.PackagingMaterialFixture;
+import ai.example.company_tmp.outbound.domain.PackagingMaterials;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;

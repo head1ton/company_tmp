@@ -26,8 +26,8 @@ public class OrderRepository {
             "배송 요구사항",
             Collections.singletonList(new OrderProduct(
                 productRepository.getBy(1L),
-                1500L,
-                1L
+                1L,
+                1500L
             ))
         );
     }
