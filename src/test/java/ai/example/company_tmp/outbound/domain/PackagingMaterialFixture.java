@@ -6,7 +6,7 @@ public class PackagingMaterialFixture {
 
     private String name = "name";
     private String code = "code";
-    private PackagingMaterialDimensionFixture packagingMaterialDimensionFixture = PackagingMaterialDimensionFixture.aPackagingMaterialDimension();
+    private PackagingMaterialDimensionFixture dimension = PackagingMaterialDimensionFixture.aPackagingMaterialDimension();
     private Long weightInGrams = 100L;
     private Long maxWeightInGrams = 1000L;
     private MaterialType materialType = MaterialType.CORRUGATED_BOX;
@@ -25,9 +25,9 @@ public class PackagingMaterialFixture {
         return this;
     }
 
-    public PackagingMaterialFixture packagingMaterialDimension(
+    public PackagingMaterialFixture dimension(
         final PackagingMaterialDimensionFixture packagingMaterialDimensionFixture) {
-        this.packagingMaterialDimensionFixture = packagingMaterialDimensionFixture;
+        this.dimension = packagingMaterialDimensionFixture;
         return this;
     }
 
@@ -51,7 +51,7 @@ public class PackagingMaterialFixture {
         return new PackagingMaterial(
             name,
             code,
-            packagingMaterialDimensionFixture.build(),
+            dimension.build(),
             weightInGrams,
             maxWeightInGrams,
             materialType

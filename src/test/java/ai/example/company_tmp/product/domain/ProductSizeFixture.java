@@ -1,6 +1,4 @@
-package ai.example.company_tmp.product.fixture;
-
-import ai.example.company_tmp.product.domain.ProductSize;
+package ai.example.company_tmp.product.domain;
 
 public class ProductSizeFixture {
 
